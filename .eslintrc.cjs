@@ -132,6 +132,7 @@ module.exports = {
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'func-call-spacing': 'off',
-    'no-unused-vars' : 'off'
+    'no-unused-vars': 'off',
+    'no-console': 'off',
   },
 }
