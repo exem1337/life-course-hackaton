@@ -14,14 +14,6 @@ export class RedirectService {
     this.router = router;
   }
 
-  public toExpertMain = (): void => {
-    this.router.push('/admin');
-  }
-
-  public toDisciplines = (): void => {
-    this.router.push('/disciplines');
-  }
-
   public redirectToDefaultByRole = (role: EUserRole): void => {
     const route = this.roleDefaultRoutesMap.get(role);
 
@@ -31,5 +23,9 @@ export class RedirectService {
     }
 
     this.router.push(route);
+  }
+
+  public toLanding() {
+    this.router.push('/');
   }
 }

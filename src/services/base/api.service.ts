@@ -2,13 +2,10 @@ import axios, { AxiosInstance } from 'axios';
 import { ErrorService } from './error.service';
 import { EErrorType } from 'src/enums/error.enum';
 import { IAxiosRequestConfig } from 'src/models/axios.model';
-import { Cookies } from 'quasar';
+// import { Cookies } from 'quasar';
 
 const instance: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
-  headers: {
-    Authorization: `Bearer ${Cookies.get('token')}`,
-  },
 });
 
 export function setDefaultHeaders(token: string): void {

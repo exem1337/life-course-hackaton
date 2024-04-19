@@ -4,6 +4,8 @@ import { Cookies, Notify } from 'quasar'
 import api, { setDefaultHeaders } from './api.service';
 import { useUserStore } from 'src/stores/user';
 import { IUser, IUserTokenInfo } from 'src/models/user.model';
+import { AuthApiService } from 'src/services/api/authApi.service'
+import { FilesApiService } from 'src/services/api/filesApi.service'
 
 export class AuthService {
   private static redirectService: RedirectService;
@@ -14,30 +16,36 @@ export class AuthService {
 
   static async auth(email: string, password: string): Promise<void> {
     const tokenInfo = await this.authByCredentials(email, password);
-    this.setTokenCookie(tokenInfo.token);
-    setDefaultHeaders(tokenInfo.token);
+    this.setTokenCookie(tokenInfo.accessToken);
+    setDefaultHeaders(tokenInfo.accessToken);
     const userInfo = await this.getUserInfoByToken();
     const store = useUserStore();
     store.setUser(userInfo);
-    this.redirectService.redirectToDefaultByRole(userInfo.role);
+    // this.redirectService.redirectToDefaultByRole(userInfo.role);
   }
 
   static async getUserInfoByToken(): Promise<IUser> {
-    return await api.get('/me');
+    return await api.post('/auth/profile');
   }
 
   static refreshApi() {
     setDefaultHeaders(this.getTokenCookie());
   }
 
+  static logout(): void {
+    Cookies.remove('token');
+    const store = useUserStore();
+    store.logout();
+    this.redirectService.toLanding();
+  }
+
   static async refresh(router: Router) {
-    const token = Cookies.get('Token');
-    const verify = Cookies.get('Verify');
-    const userKey = Cookies.get('UserKey');
+    const token = Cookies.get('token');
     const store = useUserStore();
 
-    if (token && verify && userKey) {
-      const userInfo = await api.get<IUser>(`/userInfo/${userKey}`).then((res) => res);
+    if (!store.isLoggedIn && token) {
+      setDefaultHeaders(token);
+      const userInfo = await this.getUserInfoByToken();
 
       if (!userInfo) {
         await router.push('/');
@@ -52,6 +60,10 @@ export class AuthService {
       }
 
       store.setUser(userInfo);
+
+      if (userInfo.avatar_salt) {
+        store.setAvatar(await FilesApiService.getFile(userInfo.avatar_salt));
+      }
     }
 
     this.refreshApi();
@@ -66,11 +78,8 @@ export class AuthService {
   }
 
   private static async authByCredentials(email: string, password: string): Promise<IUserTokenInfo> {
-    return await api.post('/login',
-      {
-        email,
-        password,
-      },
+    return await api.post('/auth/login',
+      { username: email, password },
       {
         showError: true,
       },

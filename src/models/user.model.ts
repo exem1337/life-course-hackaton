@@ -1,16 +1,21 @@
-import { EUserRole } from 'src/enums/userTypes.enum';
+// import { EUserRole } from 'src/enums/userTypes.enum';
 
 export interface IUser {
   id: number;
-  middleName: string;
-  name: string;
+  avatar_salt: string;
+  first_name: string;
+  last_name: string;
+  middle_name: string;
+  phone: string;
+  birthdate: string;
   email: string;
-  created_at: string;
-  lastName: string;
-  status?: string;
-  role: EUserRole;
+  password: string;
+  locality_id: 1,
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface IUserTokenInfo {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 }
