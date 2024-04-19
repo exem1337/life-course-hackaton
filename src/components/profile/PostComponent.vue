@@ -48,27 +48,34 @@
         </q-btn>
       </div>
     </q-card>
+    <RightDriverComments
+      :class="{'point-no': !showPanel}"
+      :showPanel="showPanel"
+      :showRightPanelComment="showRightPanelComment"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { IPost } from 'src/models/profile/post.model';
-// import { ref } from 'vue';
+import { ref } from 'vue';
 import { formatDate } from 'src/utils/formatDate';
+import RightDriverComments from 'components/profile/RightDriverComments.vue';
 defineProps<{
   post: IPost;
 }>()
-// let showPanel = ref(false);
+const showPanel = ref(false);
 function showRightPanelComment() {
-  // showPanel.value = !showPanel.value;
-  console.log('asdasda')
+  showPanel.value = !showPanel.value;
 }
 </script>
 
 <style scoped lang="scss">
 .profile-post{
+  position: relative;
   .profile-post-container{
     position: relative;
+    border-radius: 8px;
     overflow: hidden;
     &--icon-bottom{
       position: absolute;
@@ -95,5 +102,9 @@ function showRightPanelComment() {
       padding-bottom: 0px!important;
     }
   }
+}
+
+.point-no{
+  pointer-events: none;
 }
 </style>
