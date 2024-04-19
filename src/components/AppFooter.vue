@@ -36,6 +36,7 @@
 </template>
 
 <style lang="scss" scoped>
+@import "src/css/quasar.variables";
 .q-layout__section--marginal{
   color: #333;
 }
@@ -53,15 +54,15 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #AFD198;   
+      border-bottom: 1px solid $primary;   
       padding: 35px;
       flex-wrap: wrap;
        
       a{
-        color: #538831;
+        color: $primary;
         text-decoration: none;
         font-weight: 600;
-        max-width: 110px;
+        max-width: 150px;
         text-align: center;
       }
     
@@ -71,7 +72,7 @@
      display: flex;
       align-items: center;
       .logo-text{
-      color: #AFD198;
+      color: $primary;
      }
     }
     &--toolbar-underline{
