@@ -1,0 +1,25 @@
+<template>
+  <q-layout view="lHh Lpr lFf">
+    <AppHeader />
+    <q-page-container>
+      <router-view />
+      <ModalsContainer />
+    </q-page-container>
+  </q-layout>
+</template>
+
+<script setup lang="ts">
+import AppHeader from 'components/AppHeader.vue';
+import { ModalsContainer } from 'vue-final-modal';
+
+defineOptions({
+  name: 'MainLayout',
+});
+</script>
+
+<style lang="scss" scoped>
+.q-page-container {
+  padding: 40px;
+  margin-top: 40px;
+}
+</style>
