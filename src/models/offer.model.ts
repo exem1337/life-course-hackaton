@@ -5,8 +5,8 @@ export interface IOffer{
     header: string,
     description: string,
     author_id: number,
-    createdAt: Date,
-    updatedAt: Date,
+    createdAt: string,
+    updatedAt: string,
     users: Array<IUser>,
     author: IUser
 }

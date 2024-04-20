@@ -2,6 +2,7 @@
   <OfferCard
     v-for="offer in offers"
     :key="offer.id"
+    :offer="offer"
   />
 </template>
 
@@ -13,9 +14,10 @@ import { onBeforeMount, ref } from 'vue'
 // import { ref } from 'vue'
 
 const offers = ref<Array<IOffer>>([])
+console.log(offers.value);
 
-onBeforeMount(() => {
-  offers.value = OfferApiService.loadOffers()
+onBeforeMount(async () => {
+  offers.value = await OfferApiService.loadOffers()
 })
 
 </script>
