@@ -4,7 +4,6 @@ import { Cookies, Notify } from 'quasar'
 import api, { setDefaultHeaders } from './api.service';
 import { useUserStore } from 'src/stores/user';
 import { IUser, IUserTokenInfo } from 'src/models/user.model';
-import { AuthApiService } from 'src/services/api/authApi.service'
 import { FilesApiService } from 'src/services/api/filesApi.service'
 
 export class AuthService {

@@ -88,7 +88,7 @@ onBeforeMount(async () => {
         :disable="isButtonDisabled"
         @click="onRegister"
       >
-        Войти
+        Зарегистрироваться
       </q-btn>
     </div>
   </BaseModal>
