@@ -22,6 +22,6 @@ export const useUserStore = defineStore('user', {
     },
     setAvatar(avatarInfo: string) {
       this.avatar = avatarInfo;
-    }
+    },
   },
 });

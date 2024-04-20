@@ -24,3 +24,20 @@ export interface IJobGiverCreate {
   email: string;
   locality_id: number | null;
 }
+
+export interface IUniCreate {
+  first_name: string;
+  password: string;
+  last_name: string;
+  middle_name: string;
+  email: string;
+  university_id: number | null;
+}
+
+export interface IUniCreateRequest {
+  fullname: string;
+  shortname: string;
+  description: string;
+  address: string;
+  locality_id: number | null;
+}
