@@ -20,6 +20,7 @@ import { wrapLoader } from 'src/utils/loaderWrapper.util';
 import AppLoader from 'src/components/AppLoader.vue'
 // import { ref } from 'vue'
 
+
 const offers = ref<Array<IOffer>>([])
 console.log(offers.value);
 const router = useRouter();
