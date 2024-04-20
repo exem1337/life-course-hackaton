@@ -9,6 +9,7 @@ import {
 import routes from './routes'
 import { useUserStore } from 'stores/user'
 import { waitForCurrentUser } from 'src/utils/waitForCurrentUser.util'
+import { SKIP_AUTH_ROUTES } from 'src/constants/skipAuthRoutes.const'
 
 /*
  * If not building with SSR mode, you can
@@ -39,7 +40,7 @@ export default route(function (/* { store, ssrContext } */) {
 
     await waitForCurrentUser(() => {
       const store = useUserStore();
-      if (to.path !== '/' && !store.isLoggedIn) {
+      if (!SKIP_AUTH_ROUTES.some((route) => route === to.path) && !store.isLoggedIn) {
         routeToGo = '/';
       }
     })
