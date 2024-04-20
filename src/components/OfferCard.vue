@@ -27,8 +27,8 @@
                 icon="event"
                 class="offer-icon"
               />
-              <q-btn 
-                flat 
+              <q-btn
+                flat
                 class="offer-icon"
               >
                 {{ formatDate({ date: new Date(offer.createdAt)},{}) }}
@@ -57,7 +57,7 @@ defineProps<{
 .my-card{
   width: 100%;
   cursor: pointer;
- 
+
 }
 :deep(.offer-icon){
   pointer-events: none;
