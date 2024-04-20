@@ -7,7 +7,7 @@
           class="overflow-auto"
         >
           <img
-            :src="user.profilePhoto"
+            :src="avatarUrl"
             alt="Профиль студента"
           >
         </q-avatar>
@@ -17,13 +17,14 @@
           </div>
           <q-icon
             size="30px"
+            color="yellow-9"
             name="star"
             @click=""
           />
         </div>
       </div>
       <div class="profile-page--title__text">
-        {{ user.firstName }} {{ user.lastName }} <br>
+        {{ profile?.first_name }} {{ profile?.last_name }} <br>
         <div>
           <q-list separator>
             <q-item class="q-pl-none q-pb-none">
@@ -34,7 +35,7 @@
                     href=""
                     target="_blank"
                   >
-                    {{ user.faculty }}
+                    {{ groups.faculty }}
                   </a>
                 </q-item-label>
                 <q-item-label caption>
@@ -43,17 +44,17 @@
                     href=""
                     target="_blank"
                   >
-                    {{ user.department }}
+                    {{ groups.department }}
                   </a>
                 </q-item-label>
-                <q-item-label caption>Поток: {{ user.stream }}</q-item-label>
+                <q-item-label caption>Поток: {{ groups.stream }}</q-item-label>
                 <q-item-label caption>
                   Группа:
                   <a
                     href=""
                     target="_blank"
                   >
-                    {{ user.group }}
+                    {{ groups.group }}
                   </a>
                 </q-item-label>
               </q-item-section>
@@ -76,7 +77,7 @@
     </div>
     <div>
       <GalleryComponent
-        :images="imagesArray"
+        :images="gallery"
         class="q-mb-md"
       >
         <template #header>
@@ -113,6 +114,7 @@
             label="Показать все"
             no-caps
             class="q-mr-sm"
+            @click="onOpenLoginModal"
           />
         </template>
       </GalleryComponent>
@@ -189,19 +191,18 @@
 import GalleryComponent from 'components/profile/GalleryComponent.vue';
 import PostComponent from 'components/profile/PostComponent.vue';
 import { IPost } from 'src/models/profile/post.model';
-
-const imagesArray = [
-  { id: 1, url: 'https://klev.club/uploads/posts/2023-10/1698733776_klev-club-p-kartinki-anime-devushki-milie-50.jpg' },
-  { id: 2, url: 'https://klev.club/uploads/posts/2023-10/1698733776_klev-club-p-kartinki-anime-devushki-milie-50.jpg' },
-  { id: 3, url: 'https://klev.club/uploads/posts/2023-10/1698733776_klev-club-p-kartinki-anime-devushki-milie-50.jpg' },
-  { id: 4, url: 'https://klev.club/uploads/posts/2023-10/1698733776_klev-club-p-kartinki-anime-devushki-milie-50.jpg' },
-  { id: 5, url: 'https://klev.club/uploads/posts/2023-10/1698733776_klev-club-p-kartinki-anime-devushki-milie-50.jpg' },
-  { id: 6, url: 'https://klev.club/uploads/posts/2023-10/1698733776_klev-club-p-kartinki-anime-devushki-milie-50.jpg' },
-  { id: 7, url: 'https://klev.club/uploads/posts/2023-10/1698733776_klev-club-p-kartinki-anime-devushki-milie-50.jpg' },
-  { id: 8, url: 'https://klev.club/uploads/posts/2023-10/1698733776_klev-club-p-kartinki-anime-devushki-milie-50.jpg' },
-  { id: 9, url: 'https://klev.club/uploads/posts/2023-10/1698733776_klev-club-p-kartinki-anime-devushki-milie-50.jpg' },
-  // Добавьте другие изображения при необходимости
-];
+import { useRoute } from 'vue-router';
+import { inject, onBeforeMount, ref } from 'vue';
+import { IUser } from 'src/models/user.model';
+import { ProfileApiService } from 'src/services/api/profileApi.service';
+import { FilesApiService } from 'src/services/api/filesApi.service';
+import { IGalleryItem } from 'src/models/profile/galleryImage.model';
+import GalleryAllModal from 'components/profile/GalleryAllModal.vue';
+import ModalManager from 'src/services/base/modalManager.service';
+const modalManager = inject<ModalManager>(ModalManager.getServiceName());
+function onOpenLoginModal(): void {
+  modalManager?.openAsyncModal(GalleryAllModal);
+}
 
 const postsMock: IPost[] = [
   {
@@ -259,6 +260,39 @@ const user = {
     { id: 3, photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRz7FUbTkc7Ybed__AkeK6G_acZfp-bfwKDezTr6R6vPbYlOBOrcQ_dfwY1cDprG4IMrno&usqp=CAU', description: 'Описание публикации 3' },
   ],
 };
+
+const route = useRoute();
+const profile = ref<IUser>();
+const avatarUrl = ref('');
+const gallery = ref<IGalleryItem[]>([]);
+
+const groups = ref({
+  faculty: '',
+  department: '',
+  stream: '',
+  group: '',
+})
+onBeforeMount(async () => {
+  profile.value = await ProfileApiService.getProfileId(route.params.userId as string);
+  const url = await FilesApiService.getFile(profile.value?.avatar_salt);
+  avatarUrl.value = `data:image/png;base64,${url}`
+  if (profile.value?.groups.length !== 0) {
+    groups.value = {
+      faculty: profile.value.groups[0].direction.department.faculty.fullname,
+      department: profile.value.groups[0].direction.department.fullname,
+      stream: profile.value.groups[0].direction.fullname,
+      group: profile.value.groups[0].fullname,
+    }
+  }
+
+  gallery.value = await ProfileApiService.getGalleryProfileId(route.params.userId as string)
+  for (let i = 0; i < gallery.value.length; i++) {
+    const url = await FilesApiService.getFile(gallery.value[i].content_salt)
+    gallery.value[i].photo = `data:image/png;base64,${url}`
+  }
+  console.log(profile.value)
+  console.log(gallery.value)
+});
 </script>
 
 <style lang="scss" scoped>
