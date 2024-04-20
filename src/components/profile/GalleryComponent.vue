@@ -10,6 +10,7 @@
         class="gallery-container--list__image"
         size="208px"
         square
+        @click="openImage(image)"
       >
         <img
           :src="image?.photo"
@@ -27,10 +28,22 @@
 
 <script setup lang="ts">
 import { IGalleryItem } from 'src/models/profile/galleryImage.model';
+import { inject } from 'vue';
+import ModalManager from 'src/services/base/modalManager.service';
+import GalleryOneModal from 'components/profile/GalleryOneModal.vue';
 
 defineProps<{
   images: IGalleryItem[];
 }>()
+const modalManager = inject<ModalManager>(ModalManager.getServiceName());
+function openImage(imageItem: IGalleryItem) {
+  // eslint-disable-next-line no-undef
+  modalManager?.openAsyncModal(GalleryOneModal, {
+    attrs: {
+      image: imageItem,
+    },
+  });
+}
 </script>
 
 <style scoped lang="scss">
@@ -49,6 +62,7 @@ defineProps<{
     flex-wrap: wrap;
     &__image{
       margin: 2px;
+      cursor: pointer;
     }
   }
 

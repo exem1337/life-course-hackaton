@@ -186,7 +186,11 @@ import GalleryAllModal from 'components/profile/GalleryAllModal.vue';
 import ModalManager from 'src/services/base/modalManager.service';
 const modalManager = inject<ModalManager>(ModalManager.getServiceName());
 function onOpenLoginModal(): void {
-  modalManager?.openAsyncModal(GalleryAllModal);
+  modalManager?.openAsyncModal(GalleryAllModal, {
+    attrs: {
+      images: gallery.value,
+    },
+  });
 }
 
 const postsMock: IPost[] = [
@@ -223,14 +227,6 @@ const postsMock: IPost[] = [
 ];
 
 const user = {
-  id: 1,
-  firstName: 'Пенис',
-  lastName: 'Член',
-  faculty: 'Институт математики и информационных технологий',
-  department: 'ПОВТАС',
-  stream: '23ИВТ',
-  group: '23ИВТ(м)ИПО',
-  profilePhoto: 'https://klev.club/uploads/posts/2023-10/1698733776_klev-club-p-kartinki-anime-devushki-milie-50.jpg',
   rating: 5,
   star: 8,
   achievements: {
@@ -239,11 +235,6 @@ const user = {
     creativity: 1,
     volunteering: 4,
   },
-  publications: [
-    { id: 1, photo: 'https://pibig.info/uploads/posts/2021-05/1619883100_21-pibig_info-p-milie-litsa-devushek-anime-krasivo-25.jpg', description: 'Хорошо посидел на паре у костина' },
-    { id: 2, photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSEixcrRsVodJfdmRXchaoFgPzwJjygI8zpw_LrvY11g&s', description: 'Описание публикации 2' },
-    { id: 3, photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRz7FUbTkc7Ybed__AkeK6G_acZfp-bfwKDezTr6R6vPbYlOBOrcQ_dfwY1cDprG4IMrno&usqp=CAU', description: 'Описание публикации 3' },
-  ],
 };
 
 const route = useRoute();
