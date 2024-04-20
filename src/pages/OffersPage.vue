@@ -18,11 +18,8 @@ import { onBeforeMount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { wrapLoader } from 'src/utils/loaderWrapper.util';
 import AppLoader from 'src/components/AppLoader.vue'
-// import { ref } from 'vue'
-
 
 const offers = ref<Array<IOffer>>([])
-console.log(offers.value);
 const router = useRouter();
 const isLoading = ref(false)
 
@@ -33,7 +30,5 @@ onBeforeMount(async () => {
   await wrapLoader(isLoading, async () => {
     offers.value = await OfferApiService.loadOffers()
   })
-  // offers.value = await OfferApiService.loadOffers()
 })
-
 </script>

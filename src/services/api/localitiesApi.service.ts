@@ -3,7 +3,7 @@ import api from 'src/services/base/api.service';
 import {
   IDirectionFullResponse,
   IFacultyDepartmentFullResponse,
-  IFacultyFullResponse,
+  IFacultyFullResponse, IUniversity,
   IUniversityFullResponse,
 } from 'src/models/university.model'
 
@@ -14,6 +14,10 @@ export class LocalitiesApiService {
 
   public static async loadCity(cityId: number | null): Promise<ICity> {
     return await api.get(`/localities/one/${cityId}`);
+  }
+
+  public static async loadAllUniversities(): Promise<Array<IUniversity>> {
+    return await api.get('/universities/university');
   }
 
   public static async loadUniversity(universityId: number | null): Promise<IUniversityFullResponse> {
