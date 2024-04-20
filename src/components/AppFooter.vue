@@ -5,25 +5,51 @@
   >
     <q-toolbar class="app-footer--toolbar">
       <!-- <q-toolbar-title class="app-footer--toolbar-title"> -->
-      <router-link to="/page">Партнеры </router-link>
-      <router-link to="/page">Условия использования </router-link>
-      <router-link to="/page">Обратная связь </router-link>
+      <router-link to="/partners">Партнеры </router-link>
+      <router-link to="/terms">Условия использования </router-link>
+      <router-link to="/contacts">Обратная связь </router-link>
       <div class="app-footer--center">
-        <q-avatar>
-          <img src="../assets/image 5.svg" />
-        </q-avatar>
-        <div class="logo-text">LifeCourse</div>
+        <router-link to="/"> 
+          <q-avatar>
+            <img src="../assets/logo.svg" />
+          </q-avatar>
+          <div class="logo-text">LifeCourse</div>
+        </router-link>
       </div>
-      <router-link to="/page">О нас </router-link>
-      <router-link to="/page">Реклама </router-link>
-      <router-link to="/page">Политика конфиденциальности</router-link>
+      <router-link to="/about">О нас </router-link>
+      <router-link to="/ads">Реклама </router-link>
+      <router-link to="/privacypolicy">Политика конфиденциальности</router-link>
       <!-- </q-toolbar-title> -->
     </q-toolbar>
     <q-toolbar class="app-footer--toolbar-underline">
       <div class="icons">
-        <img src="../assets/vk.svg">
-        <img src="../assets/telegram.svg">
-        <img src="../assets/instagram.svg">
+        <a
+          href="https://vk.com/firsthackaton"
+          target="_blank"
+        >
+          <img
+            src="../assets/vk.svg"
+            alt="VK"
+          >
+        </a>
+        <a
+          href="https://t.me/OrenHack"
+          target="_blank"
+        >
+          <img
+            src="../assets/telegram.svg"
+            alt="Telegram"
+          >
+        </a>
+        <a
+          href="https://instagram.com/yourprofile"
+          target="_blank"
+        >
+          <img
+            src="../assets/instagram.svg"
+            alt="Instagram"
+          >
+        </a>
       </div>
       <div class="info">
         <p>© ООО "СОЗНАНИЕ" 2024</p>
@@ -45,6 +71,17 @@
   position: static;
   border-top: 1px solid $primary;
   box-shadow: 0px -1px 48px -17px rgba(0, 0, 0, 0.56);
+}
+
+.icons a img {
+  filter: brightness(0) saturate(100%) invert(27%) sepia(95%) saturate(4452%) hue-rotate(204deg) brightness(99%) contrast(101%);
+  width: 24px; /* или другой размер, который вам нужен */
+  height: auto;
+  transition: filter 0.3s ease; /* плавное изменение при наведении */
+}
+
+.icons a:hover img {
+  filter: brightness(0) saturate(100%) invert(47%) sepia(71%) saturate(2932%) hue-rotate(143deg) brightness(104%) contrast(97%);
 }
 
 .app-footer{
