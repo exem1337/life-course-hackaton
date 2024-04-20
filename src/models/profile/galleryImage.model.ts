@@ -1,4 +1,8 @@
-export interface IImages {
+export interface IGalleryItem {
   id: number;
-  url: string;
+  content_salt: string;
+  author_id: number;
+  createdAt: string;
+  updatedAt: string;
+  photo: string;
 }

@@ -5,14 +5,14 @@
     </div>
     <div class="gallery-container--list">
       <q-avatar
-        v-for="index in Math.min(4, images.length)"
-        :key="images[index].id"
+        v-for="image in images.slice(0, 4)"
+        :key="image?.id"
         class="gallery-container--list__image"
         size="208px"
         square
       >
         <img
-          :src="images[index].url"
+          :src="image?.photo"
           alt="Фото"
         >
       </q-avatar>
@@ -26,10 +26,10 @@
 </template>
 
 <script setup lang="ts">
-import { IImages } from 'src/models/profile/galleryImage.model';
+import { IGalleryItem } from 'src/models/profile/galleryImage.model';
 
 defineProps<{
-  images: IImages[];
+  images: IGalleryItem[];
 }>()
 </script>
 

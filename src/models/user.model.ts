@@ -1,5 +1,7 @@
 // import { EUserRole } from 'src/enums/userTypes.enum';
 
+import IGroup from 'src/models/groups.model';
+
 export interface IUser {
   id: number;
   avatar_salt: string;
@@ -13,6 +15,7 @@ export interface IUser {
   locality_id: 1,
   createdAt: string;
   updatedAt: string;
+  groups: Array<IGroup>;
 }
 
 export interface IUserTokenInfo {
