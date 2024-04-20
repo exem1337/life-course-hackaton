@@ -4,7 +4,7 @@
     :label="label ?? 'Картинки (опционально)'"
     send-raw
     color="primary"
-    :accept="accept ?? '.png, image/*'"
+    :accept="accept ?? '.png, image/*, video/*'"
     class="text-primary file-uploader"
     @added="(event) => onAddImage(event as Array<File>)"
     @removed="onRemoveImage"

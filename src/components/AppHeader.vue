@@ -10,8 +10,44 @@
       </q-avatar>
     </router-link>
     <div class="app-header--right">
-      <router-link to="/news">Новости</router-link>
-      <router-link to="/offers"> Вакансии </router-link>
+      <q-select
+        v-model="selectedItem"
+        filled
+        use-chips
+        use-input
+        :loading="isSearching"
+        dense
+        label="Поиск пользователей"
+        input-debounce="500"
+        option-value="id"
+        :option-label="(item: IUser) => formatPersonName(item.first_name, item.last_name, item.middle_name)"
+        emit-value
+        map-options
+        :options="options"
+        style="width: 250px"
+        @filter="filterFn"
+        @update:model-value="onGoToUser"
+      >
+        <template v-slot:no-option>
+          <q-item>
+            <q-item-section class="text-grey">
+              Нет результатов
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
+      <router-link
+        v-if="store.isLoggedIn"
+        to="/news"
+      >
+        Новости
+      </router-link>
+      <router-link
+        v-if="store.isLoggedIn"
+        to="/offers"
+      >
+        Вакансии
+      </router-link>
       <q-btn
         v-if="!store.isLoggedIn"
         class="bg-primary text-white"
@@ -66,23 +102,43 @@
 
 <script lang="ts" setup>
 import { useUserStore } from 'stores/user'
-import { inject } from 'vue'
+import { inject, ref } from 'vue'
 import ModalManager from 'src/services/base/modalManager.service'
 import LoginModal from 'components/modals/LoginModal.vue'
 import { formatPersonName } from '../utils/nameFormat.util'
 import { AuthService } from 'src/services/base/auth.service'
 import { useRouter } from 'vue-router'
+import { QSelect } from 'quasar'
+import { ProfileApiService } from 'src/services/api/profileApi.service'
+import { IUser } from 'src/models/user.model'
+import { wrapLoader } from 'src/utils/loaderWrapper.util'
 
 const store = useUserStore();
 const modalManager = inject<ModalManager>(ModalManager.getServiceName());
 const router = useRouter();
-
+const options = ref<Array<IUser>>([]);
+const selectedItem = ref<string | null>();
+const isSearching = ref<boolean>(false);
 function onOpenLoginModal(): void {
   modalManager?.openAsyncModal(LoginModal);
 }
 
+function filterFn (inputValue: string, doneFn: (callbackFn: () => void, afterFn?: ((ref: QSelect) => void) | undefined) => void): void {
+  doneFn(async () => {
+    await wrapLoader(isSearching, async () => {
+      options.value = await ProfileApiService.searchUser(inputValue);
+    })
+  })
+}
+
 function onGoToProfile(): void {
   router.push(`/profile/${store.user?.id}`)
+}
+
+function onGoToUser(id: number) {
+  router.push(`/profile/${id}`);
+  selectedItem.value = null;
+  options.value = [];
 }
 
 function onLogout(): void {

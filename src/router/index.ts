@@ -3,10 +3,12 @@ import {
   createMemoryHistory,
   createRouter,
   createWebHashHistory,
-  createWebHistory,
+  createWebHistory, RouteLocationNormalized,
 } from 'vue-router'
 
 import routes from './routes'
+import { useUserStore } from 'stores/user'
+import { waitForCurrentUser } from 'src/utils/waitForCurrentUser.util'
 
 /*
  * If not building with SSR mode, you can
@@ -32,5 +34,20 @@ export default route(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   })
 
-  return Router
+  Router.beforeEach(async (to: RouteLocationNormalized) => {
+    let routeToGo = to.path;
+
+    await waitForCurrentUser(() => {
+      const store = useUserStore();
+      if (to.path !== '/' && !store.isLoggedIn) {
+        routeToGo = '/';
+      }
+    })
+
+    if (routeToGo !== to.path) {
+      return routeToGo;
+    }
+  });
+
+  return Router;
 })

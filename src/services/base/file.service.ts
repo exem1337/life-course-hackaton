@@ -44,7 +44,6 @@ export class FileService {
   }
 
   static async uploadFile(file: Array<File>): Promise<string> {
-    console.log(file)
     const formData = new FormData();
     const fileToUpload = file[0];
     formData.append('content', fileToUpload);

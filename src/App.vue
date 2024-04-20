@@ -13,6 +13,7 @@ defineOptions({
 
 const router = useRouter()
 onBeforeMount(async () => {
+  AuthService.initialize(router);
   await AuthService.refresh(router);
 })
 </script>

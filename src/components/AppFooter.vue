@@ -1,38 +1,36 @@
 <template>
-  <q-layout view="hHh lpR fff">
-    <q-footer
-      elevated
-      class="app-footer--title"
-    >
-      <q-toolbar class="app-footer--toolbar">
-        <!-- <q-toolbar-title class="app-footer--toolbar-title"> -->
-        <router-link to="/page">Партнеры </router-link>
-        <router-link to="/page">Условия использования </router-link>
-        <router-link to="/page">Обратная связь </router-link>
-        <div class="app-footer--center">
-          <q-avatar>
-            <img src="../assets/image 5.svg" />
-          </q-avatar>
-          <div class="logo-text">LifeCourse</div>
-        </div>
-        <router-link to="/page">О нас </router-link>
-        <router-link to="/page">Реклама </router-link>
-        <router-link to="/page">Политика конфиденциальности</router-link>
-        <!-- </q-toolbar-title> -->
-      </q-toolbar>
-      <q-toolbar class="app-footer--toolbar-underline">
-        <div class="icons">
-          <img src="../assets/vk.svg">
-          <img src="../assets/telegram.svg">
-          <img src="../assets/instagram.svg">
-        </div>
-        <div class="info">
-          <p>© ООО "СОЗНАНИЕ" 2024</p>
-          <p>460048, Оренбургская область, г Оренбург, Томилинская ул, д. 238, помещ. 2</p>
-        </div>
-      </q-toolbar>
-    </q-footer>
-  </q-layout>
+  <q-footer
+    elevated
+    class="app-footer--title"
+  >
+    <q-toolbar class="app-footer--toolbar">
+      <!-- <q-toolbar-title class="app-footer--toolbar-title"> -->
+      <router-link to="/page">Партнеры </router-link>
+      <router-link to="/page">Условия использования </router-link>
+      <router-link to="/page">Обратная связь </router-link>
+      <div class="app-footer--center">
+        <q-avatar>
+          <img src="../assets/image 5.svg" />
+        </q-avatar>
+        <div class="logo-text">LifeCourse</div>
+      </div>
+      <router-link to="/page">О нас </router-link>
+      <router-link to="/page">Реклама </router-link>
+      <router-link to="/page">Политика конфиденциальности</router-link>
+      <!-- </q-toolbar-title> -->
+    </q-toolbar>
+    <q-toolbar class="app-footer--toolbar-underline">
+      <div class="icons">
+        <img src="../assets/vk.svg">
+        <img src="../assets/telegram.svg">
+        <img src="../assets/instagram.svg">
+      </div>
+      <div class="info">
+        <p>© ООО "СОЗНАНИЕ" 2024</p>
+        <p>460048, Оренбургская область, г Оренбург, Томилинская ул, д. 238, помещ. 2</p>
+      </div>
+    </q-toolbar>
+  </q-footer>
 </template>
 
 <style lang="scss" scoped>

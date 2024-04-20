@@ -8,7 +8,7 @@ import AppImageUploader from 'components/AppImageUploader.vue'
 import { IAddImage } from 'src/models/base/image.model'
 import { PostsApiService } from 'src/services/api/postsApi.service'
 
-const emits = defineEmits<{(e: 'confirm'): void }>();
+const emits = defineEmits<{(e: 'confirm', value: boolean): void }>();
 const store = useUserStore();
 
 const postInfo = reactive<IPostCreate>({
@@ -30,8 +30,9 @@ async function onCreate(): Promise<void> {
     await PostsApiService.createPost({
       ...postInfo,
       tags: tagsString.value?.split(' '),
+      university_id: store.getUniversity,
     })
-    emits('confirm');
+    emits('confirm', true);
   });
 }
 </script>
@@ -43,7 +44,7 @@ async function onCreate(): Promise<void> {
     title="Создать пост"
     hide-footer
     content-class="flex flex-col max-w-xl mx-4 p-4 bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-lg space-y-2"
-    @cancel="$emit('confirm')"
+    @cancel="$emit('confirm', false)"
   >
     <div class="add-post-modal">
       <q-input
