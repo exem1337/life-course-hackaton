@@ -33,33 +33,41 @@
           <q-list separator>
             <q-item class="q-pl-none q-pb-none">
               <q-item-section>
-                <q-item-label caption>
-                  Факультет:
-                  <a
-                    href=""
-                    target="_blank"
+                <q-item-label
+                  class="rout"
+                  caption
+                >
+                  Университет:
+                  <router-link
+                    class="router-link"
+                    :to="/university/ + groups.universityId"
                   >
-                    {{ groups.faculty }}
-                  </a>
+                    {{ groups.university }}
+                  </router-link>
                 </q-item-label>
-                <q-item-label caption>
-                  Кафедра:
-                  <a
-                    href=""
-                    target="_blank"
-                  >
-                    {{ groups.department }}
-                  </a>
+                <q-item-label
+                  class="row"
+                  caption
+                >
+                  Факультет: <div class="router-link--no-href">{{ groups.faculty }}</div>
                 </q-item-label>
-                <q-item-label caption>Поток: {{ groups.stream }}</q-item-label>
-                <q-item-label caption>
-                  Группа:
-                  <a
-                    href=""
-                    target="_blank"
-                  >
-                    {{ groups.group }}
-                  </a>
+                <q-item-label
+                  class="row"
+                  caption
+                >
+                  Кафедра: <div class="router-link--no-href">{{ groups.department }}</div>
+                </q-item-label>
+                <q-item-label
+                  class="row"
+                  caption
+                >
+                  Поток: <div class="router-link--no-href">{{ groups.stream }}</div>
+                </q-item-label>
+                <q-item-label
+                  class="row"
+                  caption
+                >
+                  Группа: <div class="router-link--no-href">{{ groups.group }}</div>
                 </q-item-label>
               </q-item-section>
             </q-item>
@@ -238,6 +246,8 @@ const isDataLoading = ref<boolean>(false);
 const isUserProfile = computed<boolean>(() => profile.value?.id === store.user?.id);
 
 const groups = ref({
+  universityId: '',
+  university: '',
   faculty: '',
   department: '',
   stream: '',
@@ -273,6 +283,8 @@ async function loadData(): Promise<void> {
     avatarUrl.value = `data:image/png;base64,${url}`
     if (profile.value?.groups.length !== 0) {
       groups.value = {
+        universityId: profile.value.groups[0].direction.department.faculty.university.id.toString(),
+        university: profile.value.groups[0].direction.department.faculty.university.fullname,
         faculty: profile.value.groups[0].direction.department.faculty.fullname,
         department: profile.value.groups[0].direction.department.fullname,
         stream: profile.value.groups[0].direction.fullname,
@@ -375,5 +387,26 @@ onBeforeMount(async () => {
       padding: 16px 32px;
     }
   }
+}
+.router-link{
+  color: #1D1D1D;
+  text-decoration: none;
+  margin-left: 4px;
+  font-weight: 600;
+  transition: 0.3s;
+  &:hover{
+    color: #1976D2;
+  }
+}
+
+.router-link--no-href{
+  margin-left: 8px;
+  color: #1D1D1D;
+  text-decoration: none;
+}
+
+.rout{
+  margin-bottom: 8px;
+  font-size: 16px;
 }
 </style>

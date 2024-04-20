@@ -39,4 +39,8 @@ export class LocalitiesApiService {
   public static async getAllLocalities(): Promise<Array<IRegionLocality>> {
     return await api.get('/localities');
   }
+
+  public static async getCountStudentsInLocalitiesId(localityId: number | null): Promise<number> {
+    return await api.get(`/universities/university/${localityId}/students`);
+  }
 }
