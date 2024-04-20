@@ -54,8 +54,23 @@ async function pacthData<T>(url: string, data?: unknown, config?: IAxiosRequestC
   }
 }
 
+async function deleteData<T>(url: string, config?: IAxiosRequestConfig<unknown> | undefined): Promise<T> {
+  try {
+    return (await instance.delete(url, config)).data;
+  } catch (error) {
+    const errorMessage = typeof error === 'string' ? error : EErrorType.Default;
+
+    if (config?.showError) {
+      ErrorService.showError(errorMessage);
+    }
+
+    throw new Error(errorMessage);
+  }
+}
+
 export default {
   get: fetchData,
   post: postData,
   patch: pacthData,
+  delete: deleteData,
 }

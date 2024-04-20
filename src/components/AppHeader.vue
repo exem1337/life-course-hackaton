@@ -11,6 +11,7 @@
     </router-link>
     <div class="app-header--right">
       <q-select
+        v-if="store.isLoggedIn"
         v-model="selectedItem"
         filled
         use-chips

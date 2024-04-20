@@ -1,6 +1,12 @@
 <template>
   <div class="profile-post">
     <q-card class="my-card profile-post-container">
+      <q-icon
+        v-if="isPostCreatedByCurrentUser"
+        class="delete-icon"
+        name="delete"
+        @click="onDeletePost"
+      />
       <q-item class="profile-post-container__card">
         <q-item-section avatar>
           <q-avatar>
@@ -87,23 +93,48 @@
 
 <script setup lang="ts">
 import { IPost } from 'src/models/profile/post.model';
-import { onBeforeMount, ref } from 'vue'
+import { computed, inject, onBeforeMount, ref } from 'vue'
 import { DateFormat, formatDate } from 'src/utils/formatDate'
 import RightDriverComments from 'components/profile/RightDriverComments.vue';
 import { PostsApiService } from 'src/services/api/postsApi.service'
 import { FileService } from 'src/services/base/file.service'
+import { useUserStore } from 'stores/user'
+import ModalManager from 'src/services/base/modalManager.service'
+import ConfirmModal from 'components/modals/base/ConfirmModal.vue'
 
 const props = defineProps<{
   post: IPost;
+}>();
+
+const emits = defineEmits<{
+  (e: 'delete'): void;
 }>();
 
 const slide = ref<number>(0);
 const showPanel = ref(false);
 const images = ref<Array<string>>([]);
 const likes = ref<number>(props.post?.likes);
+const store = useUserStore();
+const isPostCreatedByCurrentUser = computed<boolean>(() => props.post.author_id === store.user?.id);
+const modalManager = inject<ModalManager>(ModalManager.getServiceName());
 
 function showRightPanelComment() {
   showPanel.value = !showPanel.value;
+}
+
+async function onDeletePost(): Promise<void> {
+  modalManager?.openAsyncModal<typeof ConfirmModal, boolean>(ConfirmModal, {
+    attrs: {
+      title: 'Вы уверены, что хотите удалить пост?',
+      description: 'Действие необратимо',
+      okButtonText: 'Да, удалить',
+    },
+  }).then(async (res) => {
+    if (res) {
+      await PostsApiService.deletePost(props.post.id);
+      emits('delete');
+    }
+  });
 }
 
 async function onLike(): Promise<void> {
@@ -123,6 +154,16 @@ onBeforeMount(async () => {
 
 .profile-post{
   position: relative;
+
+  .delete-icon {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 20;
+  }
+
   .profile-post-container{
     position: relative;
     border-radius: 8px;

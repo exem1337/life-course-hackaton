@@ -12,6 +12,7 @@ export interface IPost {
   createdAt: string;
   comments?: Array<string>;
   tags?: Array<string>;
+  author_id: number;
   likes: number;
   author: IPostAuthor;
 }

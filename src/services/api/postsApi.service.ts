@@ -14,4 +14,12 @@ export class PostsApiService {
   public static async likePost(postId: number): Promise<void> {
     return await api.post(`/publications/publication/${postId}/favorites`);
   }
+
+  public static async loadUserPosts(userId: number): Promise<Array<IPost>> {
+    return await api.get(`/publications/publication/user/${userId}`);
+  }
+
+  public static async deletePost(postId: number): Promise<void> {
+    return await api.delete(`/publications/publication/${postId}`);
+  }
 }
