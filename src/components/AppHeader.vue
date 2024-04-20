@@ -5,6 +5,9 @@
       to="/"
     >
       LifeCourse
+      <q-avatar>
+        <img src="/src/assets/logo.svg">
+      </q-avatar>
     </router-link>
     <div class="app-header--right">
       <router-link to="/page">Страница </router-link>

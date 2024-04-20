@@ -9,4 +9,8 @@ export class OfferApiService {
   public static async loadOneOffer(offerId:number): Promise<IOffer> {
     return await api.get(`vacancies/vacancy/one/${offerId}`)
   }
+
+  public static async responseOffer(offerId: number, subscriberId: number): Promise<IOffer> {
+    return await api.patch(`vacancies/vacancy/subscribe/${offerId}`, { subscriber_id: subscriberId })
+  }
 }

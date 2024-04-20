@@ -40,7 +40,22 @@ async function postData<T>(url: string, data?: unknown, config?: IAxiosRequestCo
   }
 }
 
+async function pacthData<T>(url: string, data?: unknown, config?: IAxiosRequestConfig<unknown> | undefined): Promise<T> {
+  try {
+    return (await instance.patch(url, data, config)).data;
+  } catch (error) {
+    const errorMessage = typeof error === 'string' ? error : EErrorType.Default;
+
+    if (config?.showError) {
+      ErrorService.showError(errorMessage);
+    }
+
+    throw new Error(errorMessage);
+  }
+}
+
 export default {
   get: fetchData,
   post: postData,
+  patch: pacthData,
 }
