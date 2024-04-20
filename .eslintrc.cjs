@@ -48,7 +48,7 @@ module.exports = {
     'vue/multi-word-component-names': 'off',
     'vue/no-undef-properties': 'off',
     'vue/valid-v-on': 'off',
-    'no-console': ['error', { allow: ['warn', 'error'] }],
+    'no-console': 'off',
     'no-tabs': ['error', { allowIndentationTabs: false }],
     'quotes': [2, 'single', { 'avoidEscape': true }],
     'vue/no-unused-components': ['error'],

@@ -5,10 +5,14 @@
       to="/"
     >
       LifeCourse
+      <q-avatar>
+        <img src="/src/assets/logo.svg">
+      </q-avatar>
     </router-link>
     <div class="app-header--right">
       <router-link to="/page">Страница </router-link>
       <router-link to="/page2"> Страница 2 </router-link>
+      <router-link to="/offers"> Вакансии </router-link>
       <q-btn
         v-if="!store.isLoggedIn"
         class="bg-primary text-white"
@@ -99,7 +103,7 @@ function onLogout(): void {
   justify-content: space-between;
   align-items: center;
   box-shadow: 0px -1px 48px -17px rgba(0, 0, 0, 0.56);
-
+  
   .avatar {
     width: 40px;
     height: 40px;
