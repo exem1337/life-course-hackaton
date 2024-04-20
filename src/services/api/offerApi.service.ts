@@ -1,4 +1,4 @@
-import { api } from 'src/boot/axios';
+import api from 'src/services/base/api.service';
 import { IOffer } from 'src/models/offer.model';
 
 export class OfferApiService {
