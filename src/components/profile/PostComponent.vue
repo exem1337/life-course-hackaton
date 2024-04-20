@@ -9,13 +9,13 @@
         </q-item-section>
 
         <q-item-section>
-          <q-item-label>{{ post.firstName }} {{ post.lastName }}</q-item-label>
-          <q-item-label caption> {{ formatDate({ date: post.dateTime}, {}) }} · обновлено фото </q-item-label>
+          <q-item-label>{{ post.author?.first_name }} {{ post.author?.last_name }}</q-item-label>
+          <q-item-label caption> {{ formatDate({ date: new Date(post.createdAt)}, { format: DateFormat.Full }) }} </q-item-label>
         </q-item-section>
       </q-item>
       <q-item class='column q-pt-sm'>
         <h6 class="q-ma-none">{{ post.title }}</h6>
-        <p>{{ post.text }}</p>
+        <p>{{ post.content }}</p>
       </q-item>
       <img :src="post.image">
       <div class="profile-post-container--icon-bottom">
@@ -30,12 +30,13 @@
             color="gray"
           />
           <div class="profile-post-container--icon-bottom__comment-post__count">
-            {{ post.countLikes }}
+            {{ post.likes }}
           </div>
         </q-btn>
         <q-btn
           flat
           class="profile-post-container--icon-bottom__like-post"
+          @click="onLike"
         >
           <q-icon
             name="favorite"
@@ -43,7 +44,7 @@
             color="red"
           />
           <div class="profile-post-container--icon-bottom__like-post__count">
-            {{ post.countLikes }}
+            {{ post.likes }}
           </div>
         </q-btn>
       </div>
@@ -59,24 +60,33 @@
 <script setup lang="ts">
 import { IPost } from 'src/models/profile/post.model';
 import { ref } from 'vue';
-import { formatDate } from 'src/utils/formatDate';
+import { DateFormat, formatDate } from 'src/utils/formatDate'
 import RightDriverComments from 'components/profile/RightDriverComments.vue';
-defineProps<{
+import { PostsApiService } from 'src/services/api/postsApi.service'
+
+const props = defineProps<{
   post: IPost;
 }>()
+
 const showPanel = ref(false);
 function showRightPanelComment() {
   showPanel.value = !showPanel.value;
+}
+
+async function onLike(): Promise<void> {
+  await PostsApiService.likePost(props.post?.id);
 }
 </script>
 
 <style scoped lang="scss">
 .profile-post{
+
   position: relative;
   .profile-post-container{
     position: relative;
     border-radius: 8px;
     overflow: hidden;
+    min-height: 400px;
     &--icon-bottom{
       position: absolute;
       bottom: 20px;
@@ -89,11 +99,13 @@ function showRightPanelComment() {
         border-radius: 16px !important;
         backdrop-filter: blur(5px);
         background-color: rgba(255, 255, 255, 0.8) !important;
+
         & > span {
           display: flex;
           align-items: center;
           justify-content: center;
           flex-wrap: nowrap;
+          gap: 4px;
         }
       }
     }

@@ -20,6 +20,9 @@ export class AuthService {
     const userInfo = await this.getUserInfoByToken();
     const store = useUserStore();
     store.setUser(userInfo);
+    if (userInfo.avatar_salt) {
+      store.setAvatar(await FilesApiService.getFile(userInfo.avatar_salt));
+    }
     // this.redirectService.redirectToDefaultByRole(userInfo.role);
   }
 

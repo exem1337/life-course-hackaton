@@ -20,6 +20,11 @@ defineOptions({
 </script>
 
 <style lang="scss" scoped>
+.q-layout {
+  min-height: unset !important;
+  position: static;
+}
+
 .q-page-container {
   padding: 40px;
   margin-top: 40px;

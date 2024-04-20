@@ -81,22 +81,7 @@
         class="q-mb-md"
       >
         <template #header>
-          <q-btn
-            size="sm"
-            icon="image"
-            color="primary"
-            label="Фото"
-            no-caps
-            class="q-mr-sm"
-          />
-          <q-btn
-            size="sm"
-            icon="image"
-            color="primary"
-            label="Еще что-то..."
-            no-caps
-            class="q-mr-sm"
-          />
+          <p>Галерея</p>
         </template>
         <template #footer>
           <q-btn
