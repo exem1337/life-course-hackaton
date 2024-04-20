@@ -57,19 +57,13 @@ export interface IUniversityFullResponse extends IUniversity {
   faculties: Array<IFaculty>;
 }
 
-
-
 export interface IFacultyFullResponse {
   departments: Array<IFacultyDepartment>;
 }
 
-
-
 export interface IFacultyDepartmentFullResponse {
   directions: Array<IFacultyDepartmentDirection>;
 }
-
-
 
 export interface IDirectionFullResponse {
   groups: Array<IDirectionGroup>
