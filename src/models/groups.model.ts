@@ -1,3 +1,5 @@
+import { IUniversity } from 'src/models/university.model';
+
 interface Faculty {
   id: number;
   fullname: string;
@@ -6,6 +8,7 @@ interface Faculty {
   university_id: number;
   createdAt: string;
   updatedAt: string;
+  university: IUniversity;
 }
 
 interface Department {

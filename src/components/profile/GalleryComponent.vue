@@ -12,10 +12,10 @@
         square
         @click="openImage(image)"
       >
-        <img
+        <q-img
           :src="image?.photo"
           alt="Фото"
-        >
+        />
       </q-avatar>
     </div>
     <div class="gallery-container--footer">
