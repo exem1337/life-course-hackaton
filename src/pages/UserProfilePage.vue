@@ -1,5 +1,9 @@
 <template>
-  <div class="profile-page page-wrapper">
+  <AppLoader v-if="isDataLoading" />
+  <div
+    v-else
+    class="profile-page page-wrapper"
+  >
     <div class="profile-page--title">
       <div class="profile-page--title__avatar">
         <q-avatar
@@ -170,11 +174,27 @@
     </div>
     <div class="profile-page--posts">
       <p>Посты</p>
+      <EmptyBanner v-if="!userPosts?.length">
+        <template #title>
+          Постов нет
+        </template>
+        <template #button>
+          <q-btn
+            v-if="isUserProfile"
+            class="bg-white text-dark"
+            @click="onAddNewsModal"
+          >
+            Создать пост
+          </q-btn>
+        </template>
+      </EmptyBanner>
       <PostComponent
         v-for="post in userPosts"
         :key="post.id"
         :post="post"
+        :deletable="isUserProfile"
         class="q-mb-xl"
+        @delete="loadData"
       />
     </div>
   </div>
@@ -185,7 +205,7 @@ import GalleryComponent from 'components/profile/GalleryComponent.vue';
 import PostComponent from 'components/profile/PostComponent.vue';
 import { IPost } from 'src/models/profile/post.model';
 import { useRoute } from 'vue-router';
-import { inject, onBeforeMount, ref, watch } from 'vue'
+import { computed, inject, onBeforeMount, ref, watch } from 'vue'
 import { IUser } from 'src/models/user.model';
 import { ProfileApiService } from 'src/services/api/profileApi.service';
 import { FilesApiService } from 'src/services/api/filesApi.service';
@@ -194,6 +214,11 @@ import GalleryAllModal from 'components/profile/GalleryAllModal.vue';
 import ModalManager from 'src/services/base/modalManager.service';
 import { useUserStore } from 'stores/user'
 import { FileService } from 'src/services/base/file.service'
+import { PostsApiService } from 'src/services/api/postsApi.service'
+import { wrapLoader } from 'src/utils/loaderWrapper.util'
+import AppLoader from 'components/AppLoader.vue'
+import EmptyBanner from 'components/EmptyBanner.vue'
+import AddPostModal from 'components/modals/AddPostModal.vue'
 const modalManager = inject<ModalManager>(ModalManager.getServiceName());
 function onOpenLoginModal(): void {
   modalManager?.openAsyncModal(GalleryAllModal, {
@@ -209,6 +234,8 @@ const profile = ref<IUser>();
 const avatarUrl = ref('');
 const gallery = ref<IGalleryItem[]>([]);
 const userPosts = ref<Array<IPost>>([]);
+const isDataLoading = ref<boolean>(false);
+const isUserProfile = computed<boolean>(() => profile.value?.id === store.user?.id);
 
 const groups = ref({
   faculty: '',
@@ -220,6 +247,10 @@ const fileInput = ref<HTMLInputElement>();
 
 function onAttachFile(): void {
   fileInput.value?.click();
+}
+
+function onAddNewsModal(): void {
+  modalManager?.openAsyncModal<typeof AddPostModal, boolean>(AddPostModal).then(async (res) => !!res && await loadData());
 }
 
 async function attachFile(event: Event): Promise<void> {
@@ -235,23 +266,26 @@ async function attachFile(event: Event): Promise<void> {
 }
 
 async function loadData(): Promise<void> {
-  profile.value = await ProfileApiService.getProfileId(route.params.userId as string);
-  const url = await FilesApiService.getFile(profile.value?.avatar_salt);
-  avatarUrl.value = `data:image/png;base64,${url}`
-  if (profile.value?.groups.length !== 0) {
-    groups.value = {
-      faculty: profile.value.groups[0].direction.department.faculty.fullname,
-      department: profile.value.groups[0].direction.department.fullname,
-      stream: profile.value.groups[0].direction.fullname,
-      group: profile.value.groups[0].fullname,
+  await wrapLoader(isDataLoading, async () => {
+    profile.value = await ProfileApiService.getProfileId(route.params.userId as string);
+    userPosts.value = await PostsApiService.loadUserPosts(+route.params.userId);
+    const url = await FilesApiService.getFile(profile.value?.avatar_salt);
+    avatarUrl.value = `data:image/png;base64,${url}`
+    if (profile.value?.groups.length !== 0) {
+      groups.value = {
+        faculty: profile.value.groups[0].direction.department.faculty.fullname,
+        department: profile.value.groups[0].direction.department.fullname,
+        stream: profile.value.groups[0].direction.fullname,
+        group: profile.value.groups[0].fullname,
+      }
     }
-  }
 
-  gallery.value = await ProfileApiService.getGalleryProfileId(route.params.userId as string)
-  for (let i = 0; i < gallery.value.length; i++) {
-    const url = await FilesApiService.getFile(gallery.value[i].content_salt);
-    gallery.value[i].photo = `data:image/png;base64,${url}`;
-  }
+    gallery.value = await ProfileApiService.getGalleryProfileId(route.params.userId as string)
+    for (let i = 0; i < gallery.value.length; i++) {
+      const url = await FilesApiService.getFile(gallery.value[i].content_salt);
+      gallery.value[i].photo = `data:image/png;base64,${url}`;
+    }
+  })
 }
 
 watch(
