@@ -42,16 +42,16 @@
               dolore magna aliqua.
             </q-item>
           </q-card>
+          <q-input
+            model-value=""
+            placeholder="Написать комментарий"
+          ></q-input>
+          <q-btn
+            label="Отправить"
+            class="q-mt-sm q-ml-auto full-width"
+            icon="send"
+          />
         </q-scroll-area>
-        <q-input
-          model-value=""
-          placeholder="Написать комментарий"
-        ></q-input>
-        <q-btn
-          label="Отправить"
-          class="q-mt-sm q-ml-auto full-width"
-          icon="send"
-        />
       </div>
     </div>
   </div>
@@ -101,6 +101,12 @@ const scrollArea = ref<HTMLDivElement | null>(null);
     &__content{
       padding: 16px 8px;
       width: 100%;
+      height: calc(100% - 100px);
+
+      :deep(.q-scrollarea) {
+        height: 100% !important;
+      }
+
       &-card{
         background-color: transparent !important;
         box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1);

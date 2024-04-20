@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hHh lpR fff">
     <q-footer
-      elevated 
+      elevated
       class="app-footer--title"
     >
       <q-toolbar class="app-footer--toolbar">
@@ -37,8 +37,16 @@
 
 <style lang="scss" scoped>
 @import "src/css/quasar.variables";
+
 .q-layout__section--marginal{
   color: #333;
+}
+
+:global(.q-footer) {
+  z-index: 2;
+  position: static;
+  border-top: 1px solid $primary;
+  box-shadow: 0px -1px 48px -17px rgba(0, 0, 0, 0.56);
 }
 
 .app-footer{
@@ -47,17 +55,16 @@
 
   &--title{
     background-color: #fff;
-    height: 30%;
-   
+    height: 300px;
   }
       &--toolbar{
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid $primary;   
+      border-bottom: 1px solid $primary;
       padding: 35px;
       flex-wrap: wrap;
-       
+
       a{
         color: $primary;
         text-decoration: none;
@@ -65,9 +72,9 @@
         max-width: 150px;
         text-align: center;
       }
-    
+
     }
-  
+
     &--center{
      display: flex;
       align-items: center;
@@ -79,29 +86,28 @@
       display: flex;
       flex-direction: column;
       margin-top: 20px;
-    
+
     .icons{
       width: 100%;
       display: flex;
-      gap: 16px;
+      gap: 32px;
       justify-content: center;
 
         img{
           width: 30px;
-          height: 30px;       
+          height: 30px;
         }
       }
+
       .info{
         padding-top: 10px;
         display: flex;
         flex-direction: column;
         align-items: center;
         p{
-          
           color: black;
         }
       }
    }
 }
-
 </style>

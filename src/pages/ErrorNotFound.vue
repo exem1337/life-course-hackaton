@@ -9,7 +9,7 @@
         class="text-h2"
         style="opacity:.4"
       >
-        Oops. Nothing here...
+        Страница не найдена :c
       </div>
 
       <q-btn

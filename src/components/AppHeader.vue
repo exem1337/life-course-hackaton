@@ -10,8 +10,7 @@
       </q-avatar>
     </router-link>
     <div class="app-header--right">
-      <router-link to="/page">Страница </router-link>
-      <router-link to="/page2"> Страница 2 </router-link>
+      <router-link to="/news">Новости</router-link>
       <router-link to="/offers"> Вакансии </router-link>
       <q-btn
         v-if="!store.isLoggedIn"
@@ -24,7 +23,7 @@
         v-else
         split
         no-caps
-        rounded
+        flat
         @click="onGoToProfile"
       >
         <template v-slot:label>
@@ -72,16 +71,18 @@ import ModalManager from 'src/services/base/modalManager.service'
 import LoginModal from 'components/modals/LoginModal.vue'
 import { formatPersonName } from '../utils/nameFormat.util'
 import { AuthService } from 'src/services/base/auth.service'
+import { useRouter } from 'vue-router'
 
 const store = useUserStore();
 const modalManager = inject<ModalManager>(ModalManager.getServiceName());
+const router = useRouter();
 
 function onOpenLoginModal(): void {
   modalManager?.openAsyncModal(LoginModal);
 }
 
 function onGoToProfile(): void {
-  //
+  router.push(`/profile/${store.user?.id}`)
 }
 
 function onLogout(): void {
@@ -103,7 +104,7 @@ function onLogout(): void {
   justify-content: space-between;
   align-items: center;
   box-shadow: 0px -1px 48px -17px rgba(0, 0, 0, 0.56);
-  
+
   .avatar {
     width: 40px;
     height: 40px;
