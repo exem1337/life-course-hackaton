@@ -109,6 +109,7 @@ async function onAddOffer() {
   await modalManager?.openAsyncModal(CreateVacancyModal, {
     attrs: {
       organizationId,
+      localityId: organization.value?.locality_id,
     },
   }).then(async (res) => !!res && await loadData());
 }

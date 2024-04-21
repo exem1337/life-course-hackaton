@@ -18,7 +18,7 @@ export class PostsApiService {
   }
 
   public static async likePost(postId: number): Promise<void> {
-    return await api.post(`/publications/publication/${postId}/favorites`);
+    return await api.post(`/publications/publication/favorites/${postId}`);
   }
 
   public static async addComment(postId: number, text: string): Promise<void> {
@@ -38,6 +38,6 @@ export class PostsApiService {
   }
 
   public static async getFavouritePosts(): Promise<Array<IPost>> {
-    return await api.get('/publications/publication/favorites');
+    return (await api.get<Array<{ publications: IPost }>>('/publications/publication/favorites'))?.map((post) => post.publications);
   }
 }

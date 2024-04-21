@@ -6,6 +6,7 @@ import { OfferApiService } from 'src/services/api/offerApi.service'
 
 const props = defineProps<{
   organizationId: number;
+  localityId: number;
 }>();
 
 const emits = defineEmits<{(e: 'confirm', value: boolean): void }>();
@@ -14,6 +15,7 @@ const form = reactive<ICreateVacancy>({
   organization_id: props.organizationId,
   header: '',
   description: '',
+  locality_id: props.localityId,
 });
 
 async function onCreate() {

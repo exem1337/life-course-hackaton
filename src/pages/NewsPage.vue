@@ -6,6 +6,7 @@
       </template>
       <template #headerIcons>
         <q-btn
+          v-if="store.getRole !== EUserRole.Employer"
           outline
           @click="onAddNewsModal"
         >
@@ -57,6 +58,7 @@
           </template>
           <template #button>
             <q-btn
+              v-if="store.getRole !== EUserRole.Employer"
               class="bg-white text-dark"
               @click="onAddNewsModal"
             >
@@ -94,7 +96,8 @@ import AppLoader from 'components/AppLoader.vue'
 import { IUniversity } from 'src/models/university.model'
 import { LocalitiesApiService } from 'src/services/api/localitiesApi.service'
 import { useUserStore } from 'stores/user'
-import { PostSectionEnum } from 'src/enums/postSection.enum';
+import { PostSectionEnum } from 'src/enums/postSection.enum'
+import { EUserRole } from 'src/enums/userTypes.enum'
 
 const posts = ref<Array<IPost>>([]);
 const modalManager = inject<ModalManager>(ModalManager.getServiceName());

@@ -41,7 +41,7 @@
         </template>
       </q-select>
       <router-link
-        v-if="store.isLoggedIn"
+        v-if="store.isLoggedIn && store.getRole !== EUserRole.Employer"
         to="/news"
       >
         Новости

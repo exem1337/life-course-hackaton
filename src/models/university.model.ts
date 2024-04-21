@@ -78,6 +78,7 @@ export interface ICreateDirection {
 export interface ICreateVacancy {
   organization_id: number;
   header: string;
+  locality_id: number;
   description: string;
 }
 

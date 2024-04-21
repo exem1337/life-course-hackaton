@@ -79,7 +79,7 @@ async function onCreate(): Promise<void> {
         :loading="isLoading"
         @click="onCreate"
       >
-        Содать
+        Создать
       </q-btn>
     </div>
   </BaseModal>
