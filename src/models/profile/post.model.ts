@@ -28,8 +28,8 @@ export interface IPostCreate {
 }
 
 export interface IPostsFilters {
-  university?: Array<number>;
-  section?: Array<string>;
+  university?: Array<number> | null;
+  section?: Array<string> | null;
 }
 
 export interface IAssociation {
@@ -42,6 +42,10 @@ export interface IPostsRequestFilters {
       operator: string,
       value: Array<number>,
     },
+    section?: {
+      operator: string,
+      value: Array<string>,
+    }
   },
   includes?: Array<IAssociation>;
 }

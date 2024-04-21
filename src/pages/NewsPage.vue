@@ -100,8 +100,8 @@ const modalManager = inject<ModalManager>(ModalManager.getServiceName());
 const isLoading = ref<boolean>(false);
 const store = useUserStore();
 const filters = reactive<IPostsFilters>({
-  university: [],
-  section: [],
+  university: null,
+  section: null,
 });
 
 const universities = ref<Array<IUniversity>>([]);
@@ -129,6 +129,12 @@ async function loadData(): Promise<void> {
       value: filters.university,
     }
   }
+  if (filters.section?.length) {
+    filtersObj.fields.section = {
+      operator: 'eq',
+      value: filters.section,
+    }
+  }
 
   posts.value = (await PostsApiService.getPosts(filtersObj)).data;
   isLoading.value = false;
@@ -146,7 +152,7 @@ watch(
 
 onBeforeMount(async () => {
   universities.value = await LocalitiesApiService.loadAllUniversities();
-  filters.university = [store.getUniversity]
+  filters.university = store.getUniversity ? [store.getUniversity] : null
   filters.section = []
   await loadData();
 })
