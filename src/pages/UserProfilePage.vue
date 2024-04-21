@@ -10,20 +10,40 @@
           size="100px"
           class="overflow-auto"
         >
-          <img
+          <q-img
+            style="height: 100%"
+            fit="cover"
             :src="avatarUrl"
             alt="Профиль"
-          >
+          />
         </q-avatar>
         <div class="profile-page--title__avatar-star">
           <div class="profile-page--title__avatar-star-count">
-            x{{ 20 }}
+            x{{ profile?.rating }}
           </div>
           <q-icon
             size="30px"
             color="yellow-9"
             name="star"
             @click=""
+          />
+        </div>
+        <div
+          v-if="store.user?.id === profile?.id"
+          class="profile-page--title__avatar-edit"
+        >
+          <q-btn
+            round
+            size="lg"
+            icon="edit"
+            flat
+            @click="onAttachFileAvatar"
+          />
+          <input
+            ref="fileInputAvatar"
+            type="file"
+            style="display: none"
+            @change="editImageProfile"
           />
         </div>
       </div>
@@ -85,7 +105,10 @@
           </q-list>
         </div>
       </div>
-      <div class="profile-page--title__right-panel q-ml-auto q-mb-auto">
+      <div
+        v-if="store.user?.id === profile?.id"
+        class="profile-page--title__right-panel q-ml-auto q-mb-auto"
+      >
         <q-btn
           round
           size="10px"
@@ -301,11 +324,13 @@ const groups = ref({
   group: '',
 })
 const fileInput = ref<HTMLInputElement>();
-
+const fileInputAvatar = ref<HTMLInputElement>();
 function onAttachFile(): void {
   fileInput.value?.click();
 }
-
+function onAttachFileAvatar(): void {
+  fileInputAvatar.value?.click();
+}
 function onAddNewsModal(): void {
   modalManager?.openAsyncModal<typeof AddPostModal, boolean>(AddPostModal).then(async (res) => !!res && await loadData());
 }
@@ -319,6 +344,18 @@ async function attachFile(event: Event): Promise<void> {
 
   const salt = await FileService.uploadFile([target.files[0]]);
   await ProfileApiService.uploadProfileImage(salt, store.user?.id);
+  await loadData();
+}
+
+async function editImageProfile(event: Event): Promise<void> {
+  const target = event.target as HTMLInputElement;
+
+  if (!target.files?.length) {
+    return;
+  }
+
+  const salt = await FileService.uploadFile([target.files[0]]);
+  await ProfileApiService.editProfileAvatar(salt, store.user?.id);
   await loadData();
 }
 
@@ -391,6 +428,38 @@ onBeforeMount(async () => {
           position: absolute;
           top: -8px;
           right: -2px;
+        }
+      }
+      &-edit{
+        position: absolute;
+        cursor: pointer;
+        display: flex;
+        overflow: hidden;
+        border-radius: 50%;
+        opacity: 0;
+        justify-content: center;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        transition: background-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), opacity 0.6s cubic-bezier(0.25, 0.8, 0.5, 1);
+
+        :deep(.q-btn){
+          color: $primary;
+          width: 100%;
+          &:hover{
+            >.q-focus-helper{
+              background-color: transparent;
+              &:after{
+                background: transparent;
+              }
+            }
+          }
+        }
+        &:hover{
+          opacity: 1;
+          background-color: rgba(230, 230, 230, 0.26);
+          backdrop-filter: blur(5px);
         }
       }
     }

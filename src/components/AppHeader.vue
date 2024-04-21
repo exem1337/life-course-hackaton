@@ -65,12 +65,12 @@
       >
         <template v-slot:label>
           <div class="row items-center no-wrap">
-            <img
+            <q-img
               v-if="store.avatar"
               class="avatar"
               :src="`data:image/png;base64,${store.avatar}`"
               alt="картинка"
-            >
+            />
             <div
               v-else
               class="avatar"
