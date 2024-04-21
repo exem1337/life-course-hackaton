@@ -30,19 +30,14 @@
 <script lang="ts" setup>
 import BaseWrapper from 'components/BaseWrapper.vue'
 import PostComponent from 'components/profile/PostComponent.vue'
-import { inject, onBeforeMount, ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import { IPost } from 'src/models/profile/post.model'
 import { PostsApiService } from 'src/services/api/postsApi.service'
 import EmptyBanner from 'components/EmptyBanner.vue'
-import ModalManager from 'src/services/base/modalManager.service'
 import AppLoader from 'components/AppLoader.vue'
-import { useUserStore } from 'stores/user'
-import { PostSectionEnum } from 'src/enums/postSection.enum';
 
 const posts = ref<Array<IPost>>([]);
-const modalManager = inject<ModalManager>(ModalManager.getServiceName());
 const isLoading = ref<boolean>(false);
-const store = useUserStore();
 
 async function loadData(): Promise<void> {
   if (isLoading.value) {
