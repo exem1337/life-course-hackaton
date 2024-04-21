@@ -1,4 +1,5 @@
 import { IUser } from './user.model';
+import { IOrganization } from 'src/models/region.model';
 
 export interface IOffer{
   id: number,
@@ -8,7 +9,8 @@ export interface IOffer{
   createdAt: string,
   updatedAt: string,
   users: Array<IUser>,
-  author: IUser
+  author: IUser,
+  organization: IOrganization,
 }
 
 export interface IOfferFilers {
