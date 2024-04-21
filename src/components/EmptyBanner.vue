@@ -4,10 +4,10 @@
 <template>
   <div class="empty-banner bg-secondary">
     <div class="empty-banner--wrapper">
-      <div class="empty-banner--wrapper__title text-white">
+      <div class="empty-banner--wrapper__title">
         <slot name="title" />
       </div>
-      <div class="empty-banner--wrapper__desc text-white">
+      <div class="empty-banner--wrapper__desc">
         <slot name="description" />
       </div>
     </div>

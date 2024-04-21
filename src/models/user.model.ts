@@ -3,6 +3,7 @@ import { IRole } from 'src/models/role.model';
 import { EUserRole } from 'src/enums/userTypes.enum'
 import { EAppealStatus } from 'src/enums/appealStatus.enum'
 import { PostSectionEnum } from 'src/enums/postSection.enum'
+import { IOrganization } from 'src/models/region.model'
 
 export interface IStudentEventAppeal {
   createdAt: string;
@@ -42,6 +43,7 @@ export interface IUser {
   role: EUserRole;
   Appeal?: IStudentEventAppeal;
   achievements: Array<IStudentAchievement>;
+  organization?: IOrganization;
 }
 
 export interface IUserTokenInfo {

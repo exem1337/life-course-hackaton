@@ -63,6 +63,20 @@ export interface IPostsRequestFilters {
   includes?: Array<IAssociation>;
 }
 
+export interface IOffersRequestFilters {
+  fields: {
+    locality_id?: {
+      operator: string,
+      value: Array<number>,
+    },
+    organization_id?: {
+      operator: string,
+      value: Array<number>,
+    }
+  },
+  includes?: Array<IAssociation>;
+}
+
 export interface ICommentsRequestFilters {
   fields: {
     publication_id?: {

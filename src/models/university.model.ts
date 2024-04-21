@@ -75,6 +75,12 @@ export interface ICreateDirection {
   fullname: string;
 }
 
+export interface ICreateVacancy {
+  organization_id: number;
+  header: string;
+  description: string;
+}
+
 export interface IUniversityStudent {
   id: number;
   last_name: string;

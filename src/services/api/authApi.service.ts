@@ -10,7 +10,7 @@ export class AuthApiService {
     });
   }
 
-  public static async registerJobGiver(jobGiverInfo: IJobGiverCreate): Promise<void> {
+  public static async registerJobGiver(jobGiverInfo: IJobGiverCreate): Promise<IUser> {
     return await api.post('/users/createWorkGiver', jobGiverInfo);
   }
 }

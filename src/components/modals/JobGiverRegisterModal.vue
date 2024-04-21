@@ -17,6 +17,14 @@ const personInfo = reactive<IJobGiverCreate>({
   last_name: '',
   middle_name: '',
 });
+const organizationInfo = reactive({
+  name: '',
+  description: '',
+  short_name: '',
+  INN: '',
+  OGRN: '',
+  photo: '',
+})
 const isLoading = ref<boolean>(false);
 const localities = ref<Array<IRegionLocality>>([]);
 const isButtonDisabled = computed<boolean>(() => !personInfo.locality_id ||
@@ -28,7 +36,12 @@ const isButtonDisabled = computed<boolean>(() => !personInfo.locality_id ||
 );
 async function onRegister(): Promise<void> {
   await wrapLoader(isLoading, async () => {
-    await AuthApiService.registerJobGiver(personInfo);
+    const res = await AuthApiService.registerJobGiver(personInfo);
+    await LocalitiesApiService.createOrganization({
+      ...organizationInfo,
+      locality_id: personInfo.locality_id,
+      owner_id: res.id,
+    });
     emits('confirm');
   });
 }
@@ -48,40 +61,75 @@ onBeforeMount(async () => {
     @cancel="$emit('confirm')"
   >
     <div class="register-job-giver-modal">
-      <q-input
-        v-model="personInfo.last_name"
-        type="text"
-        label="Фамилия"
-      />
-      <q-input
-        v-model="personInfo.first_name"
-        type="text"
-        label="Имя"
-      />
-      <q-input
-        v-model="personInfo.middle_name"
-        type="text"
-        label="Отчество"
-      />
-      <q-input
-        v-model="personInfo.email"
-        type="email"
-        label="Электронная почта"
-      />
-      <q-input
-        v-model="personInfo.password"
-        type="password"
-        label="Пароль"
-      />
-      <q-select
-        v-model="personInfo.locality_id"
-        :options="localities"
-        option-value="id"
-        option-label="name"
-        label="Город"
-        emit-value
-        map-options
-      />
+      <div class="flex">
+        <div>
+          <q-input
+            v-model="personInfo.last_name"
+            type="text"
+            label="Фамилия"
+          />
+          <q-input
+            v-model="personInfo.first_name"
+            type="text"
+            label="Имя"
+          />
+          <q-input
+            v-model="personInfo.middle_name"
+            type="text"
+            label="Отчество"
+          />
+          <q-input
+            v-model="personInfo.email"
+            type="email"
+            label="Электронная почта"
+          />
+          <q-input
+            v-model="personInfo.password"
+            type="password"
+            label="Пароль"
+          />
+          <q-select
+            v-model="personInfo.locality_id"
+            :options="localities"
+            option-value="id"
+            option-label="name"
+            label="Город"
+            emit-value
+            map-options
+          />
+        </div>
+        <div>
+          <q-input
+            v-model="organizationInfo.name"
+            type="text"
+            label="Название организации"
+          />
+          <q-input
+            v-model="organizationInfo.short_name"
+            type="text"
+            label="Краткое название"
+          />
+          <q-input
+            v-model="organizationInfo.INN"
+            type="text"
+            mask="############"
+            label="ИНН"
+          />
+          <q-input
+            v-model="organizationInfo.OGRN"
+            type="text"
+            mask="#############"
+            label="ОГРН"
+          />
+          <q-input
+            v-model="organizationInfo.description"
+            type="textarea"
+            outlined
+            label="Описание компании"
+          />
+        </div>
+      </div>
+
       <q-btn
         class="bg-primary text-white"
         :loading="isLoading"
@@ -99,9 +147,22 @@ onBeforeMount(async () => {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  width: 600px;
 
   .q-btn {
     width: 100%;
+  }
+
+  .flex {
+    display: flex;
+    gap: 16px;
+
+    div {
+      width: 48%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
   }
 }
 </style>
