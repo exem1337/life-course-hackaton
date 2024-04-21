@@ -1,4 +1,4 @@
-import { ICity, IRegion, IRegionLocality } from 'src/models/region.model'
+import { ICity, ICreateOrganization, IOrganization, IRegion, IRegionLocality } from 'src/models/region.model'
 import api from 'src/services/base/api.service';
 import {
   ICreateDirection,
@@ -15,6 +15,10 @@ import { IPagination } from 'src/models/base/pagination.model'
 export class LocalitiesApiService {
   public static async loadRegions(): Promise<Array<IRegion>> {
     return await api.get('/localities/regions');
+  }
+
+  public static async laodLocalities(): Promise<Array<IRegionLocality>> {
+    return await api.get('/localities');
   }
 
   public static async loadCity(cityId: number | null): Promise<ICity> {
@@ -164,5 +168,13 @@ export class LocalitiesApiService {
 
   public static async acceptEventAppeal(id: number): Promise<void> {
     return await api.get(`/achievements/appeal/${id}/accept`);
+  }
+
+  public static async createOrganization(data: ICreateOrganization): Promise<void> {
+    return await api.post('/vacancies/organizations', data);
+  }
+
+  public static async loadOrganizaiton(id: number): Promise<IOrganization> {
+    return await api.get(`/vacancies/organizations/one/${id}`);
   }
 }

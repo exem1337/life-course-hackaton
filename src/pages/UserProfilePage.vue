@@ -17,7 +17,10 @@
             alt="Профиль"
           />
         </q-avatar>
-        <div class="profile-page--title__avatar-star">
+        <div
+          v-if="store.getRole === EUserRole.User"
+          class="profile-page--title__avatar-star"
+        >
           <div class="profile-page--title__avatar-star-count">
             x{{ profile?.rating }}
           </div>
@@ -64,6 +67,13 @@
                   >
                     {{ adminUniversity?.fullname || groups.university }}
                   </router-link>
+                </q-item-label>
+                <q-item-label
+                  v-if="store.getRole === EUserRole.Employer"
+                  class="row"
+                  caption
+                >
+                  Владелец организации
                 </q-item-label>
                 <q-item-label
                   v-if="adminUniversity?.id"
@@ -266,39 +276,37 @@
         @delete="loadData"
       />
     </div>
-    <OfferCard
-      v-if="role === EUserRole.Employer"
-      :offers="vacancies"
-    >
-      <template #headerIcons>
+    <EmptyBanner v-if="role === EUserRole.Employer">
+      <template #title>
+        {{ (profile as IUser)?.organization?.name }}
+      </template>
+      <template #description>
+        {{ (profile as IUser)?.organization?.description }}
+      </template>
+      <template #button>
         <q-btn
-          round
-          size="10px"
-          color="primary"
-          @click=""
+          class="bg-primary text-white"
+          @click="onGoToOrganization"
         >
-          <q-icon
-            name="add"
-            size="20px"
-          />
+          Перейти в профиль организации
         </q-btn>
       </template>
-    </OfferCard>
+    </EmptyBanner>
   </div>
 </template>
 
 <script lang="ts" setup>
-import GalleryComponent from 'components/profile/GalleryComponent.vue';
-import PostComponent from 'components/profile/PostComponent.vue';
-import { IPost } from 'src/models/profile/post.model';
-import { useRoute } from 'vue-router';
+import GalleryComponent from 'components/profile/GalleryComponent.vue'
+import PostComponent from 'components/profile/PostComponent.vue'
+import { IPost } from 'src/models/profile/post.model'
+import { useRoute, useRouter } from 'vue-router'
 import { computed, inject, onBeforeMount, ref, watch } from 'vue'
 import { IStudentAchievement, IUser } from 'src/models/user.model'
-import { ProfileApiService } from 'src/services/api/profileApi.service';
-import { FilesApiService } from 'src/services/api/filesApi.service';
-import { IGalleryItem } from 'src/models/profile/galleryImage.model';
-import GalleryAllModal from 'components/profile/GalleryAllModal.vue';
-import ModalManager from 'src/services/base/modalManager.service';
+import { ProfileApiService } from 'src/services/api/profileApi.service'
+import { FilesApiService } from 'src/services/api/filesApi.service'
+import { IGalleryItem } from 'src/models/profile/galleryImage.model'
+import GalleryAllModal from 'components/profile/GalleryAllModal.vue'
+import ModalManager from 'src/services/base/modalManager.service'
 import { useUserStore } from 'stores/user'
 import { FileService } from 'src/services/base/file.service'
 import { PostsApiService } from 'src/services/api/postsApi.service'
@@ -306,10 +314,7 @@ import { wrapLoader } from 'src/utils/loaderWrapper.util'
 import AppLoader from 'components/AppLoader.vue'
 import EmptyBanner from 'components/EmptyBanner.vue'
 import AddPostModal from 'components/modals/AddPostModal.vue'
-import { EUserRole } from 'src/enums/userTypes.enum';
-import { IOffer } from 'src/models/offer.model';
-import { OfferApiService } from 'src/services/api/offerApi.service';
-import OfferCard from 'components/OfferCard.vue';
+import { EUserRole } from 'src/enums/userTypes.enum'
 import { IUniversity } from 'src/models/university.model'
 import { LocalitiesApiService } from 'src/services/api/localitiesApi.service'
 import { PostSectionEnum } from 'src/enums/postSection.enum'
@@ -328,13 +333,13 @@ const store = useUserStore();
 const route = useRoute();
 const profile = ref<IUser>();
 const role = ref<string>('');
-const vacancies = ref<Array<IOffer>>([]);
 const avatarUrl = ref('');
 const gallery = ref<IGalleryItem[]>([]);
 const userPosts = ref<Array<IPost>>([]);
 const isDataLoading = ref<boolean>(false);
 const isUserProfile = computed<boolean>(() => profile.value?.id === store.user?.id);
 const adminUniversity = ref<IUniversity>();
+const router = useRouter()
 
 const groups = ref({
   universityId: '',
@@ -349,6 +354,10 @@ const fileInputAvatar = ref<HTMLInputElement>();
 
 function getAchievements(type: PostSectionEnum): Array<IStudentAchievement> {
   return profile.value?.achievements?.filter((ach) => ach.event?.section === type) || [];
+}
+
+function onGoToOrganization() {
+  router.push(`/organizations/${(profile.value as IUser).organization?.id}`);
 }
 
 function onAttachFile(): void {
@@ -415,9 +424,6 @@ async function loadData(): Promise<void> {
     for (let i = 0; i < gallery.value.length; i++) {
       const url = await FilesApiService.getFile(gallery.value[i].content_salt);
       gallery.value[i].photo = `data:image/png;base64,${url}`;
-    }
-    if (role.value === EUserRole.Employer) {
-      vacancies.value = await OfferApiService.getVacanciesByUserId(Number(route.params.userId));
     }
   })
 }

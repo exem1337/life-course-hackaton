@@ -6,7 +6,12 @@
         <slot name="headerIcons" />
       </template>
       <template #content>
+        <EmptyBanner v-if="!offers?.length">
+          <template #title>Пока нет вакансий</template>
+          <template #description>Создавайте вакансии вашей организации <br> и просматривайте списки откликнувшихся студентов</template>
+        </EmptyBanner>
         <div
+          v-else
           v-for="offer in offers"
           :key="offer.id"
           class="q-px-md q-py-sm row items-start q-gutter-md"
@@ -20,9 +25,6 @@
             <q-card-section horizontal>
               <q-card-section class="q-pt-xs">
                 <div class="text-h5 q-mt-sm q-mb-xs">{{ offer?.header }}</div>
-                <div class="text-caption text-grey">
-                  {{ formatPersonName(offer.author.first_name,  offer.author.last_name, offer.author.middle_name) }}
-                </div>
               </q-card-section>
             </q-card-section>
 
@@ -44,7 +46,7 @@
                 </q-btn>
               </div>
               <div>
-                Откликнулось: {{ offer.users.length }}
+                Откликнулось: {{ offer.users?.length }}
                 <q-icon
                   name="person"
                   size="25px"
@@ -60,14 +62,16 @@
 
 <script lang="ts" setup>
 import { IOffer } from 'src/models/offer.model';
-import { formatPersonName } from 'src/utils/nameFormat.util';
 import { formatDate } from 'src/utils/formatDate'
 import BaseWrapper from './BaseWrapper.vue';
 import { useRouter } from 'vue-router';
+import EmptyBanner from 'components/EmptyBanner.vue'
 const router = useRouter();
+
 defineProps<{
   offers: Array<IOffer>
 }>()
+
 function onOfferClick(offerID: number) {
   console.log(offerID);
   router.push(`/offers/${offerID}`);
