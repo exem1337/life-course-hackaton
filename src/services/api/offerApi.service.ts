@@ -29,4 +29,12 @@ export class OfferApiService {
   public static async createOffer(data: ICreateVacancy): Promise<void> {
     return await api.post('/vacancies/vacancy', data);
   }
+
+  public static async editOffer(id: number, data: Partial<IOffer>): Promise<void> {
+    return await api.patch(`/vacancies/vacancy/${id}`, data);
+  }
+
+  public static async deleteOffer(id: number): Promise<void> {
+    return await api.delete(`/vacancies/vacancy/${id}`);
+  }
 }

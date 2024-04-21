@@ -10,12 +10,14 @@
             color="primary"
             round
             icon="edit"
+            @click="onEditOffer"
           />
           <q-btn
             size="md"
             color="primary"
             round
             icon="delete"
+            @click="onDeleteOffer"
           />
         </div>
         <q-btn
@@ -25,7 +27,7 @@
           @click="onOpenAllStudentsModal"
         />
         <q-btn
-          v-if="role === EUserRole.User"
+          v-if="store.getRole === EUserRole.User"
           v-model="isClicked"
           flat
           color="primary"
@@ -86,14 +88,17 @@ import AppLoader from 'src/components/AppLoader.vue'
 import { EUserRole } from 'src/enums/userTypes.enum';
 import ModalManager from 'src/services/base/modalManager.service';
 import OfferListStudents from 'components/modals/OfferListStudents.vue';
+import EditOfferModal from 'components/modals/EditOfferModal.vue'
+import ConfirmModal from 'components/modals/base/ConfirmModal.vue'
 
 const offer = ref<IOffer>()
 const route = useRoute();
 const store = useUserStore();
 const isClicked = false;
-const isLoading = ref(false)
-const role = ref<string>('')
+const isLoading = ref(false);
 const modalManager = inject<ModalManager>(ModalManager.getServiceName());
+const isButtonDisabled = computed(() => !!offer.value?.users?.find((user) => user.id === store.user?.id))
+
 async function onOpenAllStudentsModal(): Promise<void> {
   await modalManager?.openAsyncModal(OfferListStudents, {
     attrs: {
@@ -103,20 +108,54 @@ async function onOpenAllStudentsModal(): Promise<void> {
   });
 }
 
-if (store.user.roles.length !== 0) {
-  role.value = store.user.roles[0].name
+async function onEditOffer(): Promise<void> {
+  await modalManager?.openAsyncModal<typeof EditOfferModal, { header: string, description: string }>(EditOfferModal, {
+    attrs: {
+      header: offer.value?.header,
+      description: offer.value?.description,
+    },
+  }).then(async (res) => {
+    if (!res) {
+      return;
+    }
+
+    await OfferApiService.editOffer(offer.value?.id || 0, res);
+    await loadData();
+  });
 }
+
+async function onDeleteOffer(): Promise<void> {
+  await modalManager?.openAsyncModal(ConfirmModal, {
+    attrs: {
+      title: 'Вы точно хотите удалить вакансию?',
+      description: 'Действие необратимо',
+    },
+  }).then(async (res) => {
+    if (!res) {
+      return;
+    }
+
+    await OfferApiService.deleteOffer(offer.value?.id || 0);
+    await loadData();
+  })
+}
+
 async function respondOffer() {
   await wrapLoader(isLoading, async () => {
     await OfferApiService.responseOffer(offer.value?.id || 0, store.user?.id)
     offer.value = await OfferApiService.loadOneOffer(+route.params.id)
   })
 }
-onBeforeMount(async () => {
-  offer.value = await OfferApiService.loadOneOffer(+route.params.id)
-})
-const isButtonDisabled = computed(() => !!offer.value?.users?.find((user) => user.id === store.user?.id))
 
+async function loadData() {
+  await wrapLoader(isLoading, async () => {
+    offer.value = await OfferApiService.loadOneOffer(+route.params.id);
+  });
+}
+
+onBeforeMount(async () => {
+  await loadData();
+})
 </script>
 
 <style lang="scss" scoped>
