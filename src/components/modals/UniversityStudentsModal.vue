@@ -42,7 +42,7 @@ defineEmits<{(e: 'confirm'): void }>();
 
         <q-item-section>
           <q-item-label>{{ formatPersonName(student.first_name, student.last_name, student.middle_name) }}</q-item-label>
-          <q-item-label caption> {{ student.fullname }}, Рейтинг: {{ student.rating }} </q-item-label>
+          <q-item-label caption>Рейтинг: {{ student.rating }} </q-item-label>
         </q-item-section>
       </q-item>
     </div>

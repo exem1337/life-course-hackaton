@@ -9,6 +9,8 @@ import {
 } from 'src/models/university.model'
 import { FileService } from 'src/services/base/file.service'
 import { IUniCreateRequest, IUniCreateResponse } from 'src/models/user/student.model'
+import { IEvent, IEventCreateRequest, IGetEventsRequestParams } from 'src/models/event.model'
+import { IPagination } from 'src/models/base/pagination.model'
 
 export class LocalitiesApiService {
   public static async loadRegions(): Promise<Array<IRegion>> {
@@ -138,5 +140,29 @@ export class LocalitiesApiService {
 
   public static async getAdminUniversity(adminId: number): Promise<IUniversity> {
     return (await api.get<Array<IUniversity>>(`/universities/university/university/admin/${adminId}`))?.[0];
+  }
+
+  public static async getEvents(requestParams: IGetEventsRequestParams): Promise<Array<IEvent>> {
+    return (await api.post<IPagination<Array<IEvent>>>('/events/event/all', requestParams))?.data;
+  }
+
+  public static async createEvent(data: IEventCreateRequest): Promise<void> {
+    return await api.post('/events/event', data);
+  }
+
+  public static async appealToEvent(eventId: number): Promise<void> {
+    return await api.post('/achievements/appeal', {
+      text: '',
+      event_id: eventId,
+    });
+  }
+
+  public static async loadUniversityImages(universityId: number): Promise<Array<string>> {
+    const images = await api.get<Array<{ content_salt: string }>>(`/universities/university/${universityId}/content`);
+    return await Promise.all(images?.map(async (image) => `data:image/png;base64,${await FileService.getFileBase64(image.content_salt)}`));
+  }
+
+  public static async acceptEventAppeal(id: number): Promise<void> {
+    return await api.get(`/achievements/appeal/${id}/accept`);
   }
 }

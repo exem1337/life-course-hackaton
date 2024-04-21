@@ -35,6 +35,10 @@ export class FileService {
   }
 
   static async getFileBase64(salt: string): Promise<string> {
+    if (!salt) {
+      return '';
+    }
+
     return await api.get<string>(
       `/cdn/get/${salt}`,
       {
