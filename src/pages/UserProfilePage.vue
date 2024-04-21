@@ -357,6 +357,8 @@ async function editImageProfile(event: Event): Promise<void> {
   const salt = await FileService.uploadFile([target.files[0]]);
   await ProfileApiService.editProfileAvatar(salt, store.user?.id);
   await loadData();
+  const url = await FilesApiService.getFile(salt);
+  store.setAvatar(url);
 }
 
 async function loadData(): Promise<void> {
