@@ -8,6 +8,7 @@ export function formatDate({ date }: { date: Date }, { format = DateFormat.dateM
   const months = [
     'янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек',
   ];
+  console.log(date)
   switch (format) {
     case DateFormat.dateMonthYear:
       return `${date?.getDate()} ${months[date?.getMonth()]} ${date?.getFullYear()}`;
