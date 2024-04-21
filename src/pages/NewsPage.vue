@@ -118,9 +118,14 @@ async function loadData(): Promise<void> {
   isLoading.value = true;
   const filtersObj: IPostsRequestFilters = {
     fields: {},
-    includes: [{
-      association: 'author',
-    }],
+    includes: [
+      {
+        association: 'author',
+      },
+      {
+        association: 'comments',
+      },
+    ],
   }
 
   if (filters.university?.length) {
