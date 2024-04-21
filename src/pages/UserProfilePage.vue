@@ -186,15 +186,30 @@
         >
           <q-card>
             <q-card-section>
-              <q-card
+              <q-item
                 v-for="ach in getAchievements(PostSectionEnum.Science)"
                 :key="ach.createdAt"
+                class="border"
               >
-                {{ ach.event.name }}
-              </q-card>
+                <q-item-section>
+                  <q-item-label>{{ ach.event.name }}</q-item-label>
+                  <q-item-label caption>Дата: {{ formatDate({ date: new Date(ach.event.createdAt)}, {}) }}</q-item-label>
+                </q-item-section>
+                <q-item-section
+                  side
+                  top
+                >
+                  <q-item-label caption>{{ ach.value }} {{ pluralizePoints(ach.value) }}</q-item-label>
+                  <span class="text-orange">
+                    <q-icon name="emoji_events" />
+                  </span>
+                </q-item-section>
+              </q-item>
             </q-card-section>
           </q-card>
         </q-expansion-item>
+
+        <!-- Достижения в спорте -->
         <q-expansion-item
           expand-separator
           icon="fitness_center"
@@ -203,15 +218,30 @@
         >
           <q-card>
             <q-card-section>
-              <q-card
+              <q-item
                 v-for="ach in getAchievements(PostSectionEnum.Sport)"
                 :key="ach.createdAt"
+                class="border"
               >
-                {{ ach.event.name }}
-              </q-card>
+                <q-item-section>
+                  <q-item-label>{{ ach.event.name }}</q-item-label>
+                  <q-item-label caption>Дата: {{ formatDate({ date: new Date(ach.event.createdAt)}, {}) }}</q-item-label>
+                </q-item-section>
+                <q-item-section
+                  side
+                  top
+                >
+                  <q-item-label caption>{{ ach.value }} {{ pluralizePoints(ach.value) }}</q-item-label>
+                  <div class="text-orange">
+                    <q-icon name="emoji_events" />
+                  </div>
+                </q-item-section>
+              </q-item>
             </q-card-section>
           </q-card>
         </q-expansion-item>
+
+        <!-- Достижения в творчестве -->
         <q-expansion-item
           expand-separator
           icon="palette"
@@ -220,15 +250,30 @@
         >
           <q-card>
             <q-card-section>
-              <q-card
+              <q-item
                 v-for="ach in getAchievements(PostSectionEnum.Creation)"
                 :key="ach.createdAt"
+                class="border"
               >
-                {{ ach.event.name }}
-              </q-card>
+                <q-item-section>
+                  <q-item-label>{{ ach.event.name }}</q-item-label>
+                  <q-item-label caption>Дата: {{ formatDate({ date: new Date(ach.event.createdAt)}, {}) }}</q-item-label>
+                </q-item-section>
+                <q-item-section
+                  side
+                  top
+                >
+                  <q-item-label caption>{{ ach.value }} {{ pluralizePoints(ach.value) }}</q-item-label>
+                  <div class="text-orange">
+                    <q-icon name="emoji_events" />
+                  </div>
+                </q-item-section>
+              </q-item>
             </q-card-section>
           </q-card>
         </q-expansion-item>
+
+        <!-- Достижения в волонтерстве -->
         <q-expansion-item
           expand-separator
           icon="volunteer_activism"
@@ -237,12 +282,25 @@
         >
           <q-card>
             <q-card-section>
-              <q-card
+              <q-item
                 v-for="ach in getAchievements(PostSectionEnum.Volunteering)"
                 :key="ach.createdAt"
+                class="border"
               >
-                {{ ach.event.name }}
-              </q-card>
+                <q-item-section>
+                  <q-item-label>{{ ach.event.name }}</q-item-label>
+                  <q-item-label caption>Дата: {{ formatDate({ date: new Date(ach.event.createdAt)}, {}) }}</q-item-label>
+                </q-item-section>
+                <q-item-section
+                  side
+                  top
+                >
+                  <q-item-label caption>{{ ach.value }} {{ pluralizePoints(ach.value) }}</q-item-label>
+                  <div class="text-orange">
+                    <q-icon name="emoji_events" />
+                  </div>
+                </q-item-section>
+              </q-item>
             </q-card-section>
           </q-card>
         </q-expansion-item>
@@ -318,6 +376,7 @@ import { EUserRole } from 'src/enums/userTypes.enum'
 import { IUniversity } from 'src/models/university.model'
 import { LocalitiesApiService } from 'src/services/api/localitiesApi.service'
 import { PostSectionEnum } from 'src/enums/postSection.enum'
+import { formatDate } from 'src/utils/formatDate';
 
 const modalManager = inject<ModalManager>(ModalManager.getServiceName());
 
@@ -352,6 +411,11 @@ const groups = ref({
 const fileInput = ref<HTMLInputElement>();
 const fileInputAvatar = ref<HTMLInputElement>();
 
+function pluralizePoints(value: number) {
+  if (value === 1) return 'балл';
+  else if (value < 5) return 'балла';
+  else return 'баллов';
+}
 function getAchievements(type: PostSectionEnum): Array<IStudentAchievement> {
   return profile.value?.achievements?.filter((ach) => ach.event?.section === type) || [];
 }
@@ -568,5 +632,11 @@ onBeforeMount(async () => {
 .rout{
   margin-bottom: 8px;
   font-size: 16px;
+}
+
+.border{
+  &:not(:first-child){
+    border-top: 1px solid lightgrey;
+  }
 }
 </style>
