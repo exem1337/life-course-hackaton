@@ -3,7 +3,7 @@
     <q-card class="my-card profile-post-container">
       <q-icon
         v-if="isPostCreatedByCurrentUser"
-        style="z-index: 0"
+        style="z-index: 1"
         class="delete-icon"
         name="delete"
         @click="onDeletePost"
@@ -16,14 +16,14 @@
         </q-item-section>
 
         <q-item-section>
-          <q-item-label>{{ clonePost.author?.first_name }} {{ clonePost.author?.last_name }}</q-item-label>
-          <q-item-label caption> {{ formatDate({ date: new Date(clonePost.createdAt)}, { format: DateFormat.Full }) }} </q-item-label>
+          <q-item-label>{{ post.author?.first_name }} {{ post.author?.last_name }}</q-item-label>
+          <q-item-label caption> {{ formatDate({ date: new Date(post.createdAt)}, { format: DateFormat.Full }) }} </q-item-label>
         </q-item-section>
       </q-item>
       <q-item class="profile-post-container__tags">
         <q-item-section>
           <q-item-label
-            v-for="tag in clonePost.tags"
+            v-for="tag in post.tags"
             :key="tag"
             class="profile-post-container__tags--tag"
           >
@@ -32,8 +32,8 @@
         </q-item-section>
       </q-item>
       <q-item class='column q-pt-sm'>
-        <h6 class="q-ma-none">{{ clonePost.title }}</h6>
-        <p>{{ clonePost.content }}</p>
+        <h6 class="q-ma-none">{{ post.title }}</h6>
+        <p>{{ post.content }}</p>
       </q-item>
 
       <q-carousel
@@ -65,9 +65,6 @@
             size="25px"
             color="gray"
           />
-          <div class="profile-post-container--icon-bottom__comment-post__count">
-            {{ clonePost.comments?.length }}
-          </div>
         </q-btn>
         <q-btn
           flat
@@ -80,15 +77,18 @@
             color="red"
           />
           <div class="profile-post-container--icon-bottom__like-post__count">
-            {{ clonePost.likes }}
+            {{ post.likes }}
           </div>
         </q-btn>
       </div>
     </q-card>
     <RightDriverComments
+      style="z-index: 2"
       :class="{'point-no': !showPanel}"
       :showPanel="showPanel"
       :showRightPanelComment="showRightPanelComment"
+      :idPost="post.id"
+      :user="store.user"
     />
   </div>
 </template>
@@ -107,7 +107,7 @@ import ConfirmModal from 'components/modals/base/ConfirmModal.vue'
 const props = defineProps<{
   post: IPost;
 }>();
-const clonePost = ref<IPost>({ ...props.post });
+// const clonePost = ref<IPost>({ ...props.post });
 const emits = defineEmits<{
   (e: 'delete'): void;
 }>();
@@ -115,9 +115,9 @@ const emits = defineEmits<{
 const slide = ref<number>(0);
 const showPanel = ref(false);
 const images = ref<Array<string>>([]);
-const likes = ref<number>(clonePost.value?.likes);
+const likes = ref<number>(props.post?.likes);
 const store = useUserStore();
-const isPostCreatedByCurrentUser = computed<boolean>(() => clonePost.value.author_id === store.user?.id);
+const isPostCreatedByCurrentUser = computed<boolean>(() => props.post.author_id === store.user?.id);
 const modalManager = inject<ModalManager>(ModalManager.getServiceName());
 const avatar = ref<string>('');
 function showRightPanelComment() {
@@ -133,7 +133,7 @@ async function onDeletePost(): Promise<void> {
     },
   }).then(async (res) => {
     if (res) {
-      await PostsApiService.deletePost(clonePost.value.id);
+      await PostsApiService.deletePost(props.post.id);
       emits('delete');
     }
   });
@@ -145,12 +145,12 @@ async function onLike(): Promise<void> {
 }
 
 onBeforeMount(async () => {
-  images.value = await Promise.all(clonePost.value?.file_keys?.map(
+  images.value = await Promise.all(props.post?.file_keys?.map(
     async (fileKey: string) => `data:image/png;base64,${await FileService.getFileBase64(fileKey)}`),
   );
 
-  if (clonePost.value?.author.avatar_salt != null) {
-    avatar.value = `data:image/png;base64,${await FileService.getFileBase64(clonePost.value?.author.avatar_salt)}`
+  if (props.post?.author.avatar_salt != null) {
+    avatar.value = `data:image/png;base64,${await FileService.getFileBase64(props.post?.author.avatar_salt)}`
   }
 })
 </script>

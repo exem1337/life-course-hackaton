@@ -1,3 +1,16 @@
+import { IUser } from 'src/models/user.model';
+
+export interface IComment {
+  id: number;
+  text: string;
+  createdAt: string;
+  updatedAt: string;
+  user_id: number | null; // Если user_id может быть null
+  publication_id: number;
+  photo: string;
+  user: IUser;
+}
+
 export interface IPostAuthor {
   avatar_salt: string;
   first_name: string;
@@ -10,7 +23,7 @@ export interface IPost {
   title: string;
   content: string;
   createdAt: string;
-  comments?: Array<string>;
+  comments?: Array<IComment>;
   tags?: Array<string>;
   author_id: number;
   likes: number;
@@ -46,6 +59,16 @@ export interface IPostsRequestFilters {
       operator: string,
       value: Array<string>,
     }
+  },
+  includes?: Array<IAssociation>;
+}
+
+export interface ICommentsRequestFilters {
+  fields: {
+    publication_id?: {
+      operator: string,
+      value: number,
+    },
   },
   includes?: Array<IAssociation>;
 }

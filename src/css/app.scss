@@ -10,6 +10,12 @@
 .q-avatar{
   background-color: rgba(51, 51, 51, 0.25);
 }
+.q-avatar img:not(.q-icon):not(.q-img__image){
+  object-fit: cover;
+}
+.q-img{
+  height: 100%;
+}
 //
 //body {
 //  min-height: 100vh;

@@ -6,7 +6,10 @@
     >
       LifeCourse
       <q-avatar>
-        <img src="/src/assets/logo.svg">
+        <q-img
+          fit="cover"
+          src="/src/assets/logo.svg"
+        />
       </q-avatar>
     </router-link>
     <div class="app-header--right">
