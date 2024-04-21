@@ -110,6 +110,19 @@
                 >
                   Группа: <div class="router-link--no-href">{{ groups.group }}</div>
                 </q-item-label>
+                <q-item-label
+                  v-if="!adminUniversity?.id && store.getRole === EUserRole.Employer"
+                  class="row"
+                  caption
+                >
+                  Email:
+                  <a
+                    :href="`mailto:${(profile as IUser).email}`"
+                    class="email"
+                  >
+                    {{ (profile as IUser).email }}
+                  </a>
+                </q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
@@ -636,6 +649,12 @@ onBeforeMount(async () => {
 .rout{
   margin-bottom: 8px;
   font-size: 16px;
+}
+
+.email {
+  text-decoration: none;
+  color: $primary;
+  margin-left: 4px;
 }
 
 .border{

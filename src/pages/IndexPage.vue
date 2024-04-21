@@ -125,6 +125,8 @@
         </q-btn>
       </div>
     </div>
+
+    <TopStudents />
   </q-page>
 </template>
 
@@ -135,6 +137,7 @@ import RegisterStudentModal from 'components/modals/RegisterStudentModal.vue'
 import JobGiverRegisterModal from 'components/modals/JobGiverRegisterModal.vue'
 import { useMeta } from 'quasar'
 import RegisterUniversityModal from 'components/modals/RegisterUniversityModal.vue'
+import TopStudents from 'components/TopStudents.vue'
 
 const modalManager = inject<ModalManager>(ModalManager.getServiceName());
 
