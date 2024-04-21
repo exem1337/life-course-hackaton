@@ -182,10 +182,10 @@
           expand-separator
           icon="science"
           label="Достижения в науке"
-          :caption="'x'"
+          :caption="`x${getAchievements(PostSectionEnum.Science).length.toString()}`"
         >
           <q-card>
-            <q-card-section>
+            <q-card-section v-if="getAchievements(PostSectionEnum.Science).length != 0">
               <q-item
                 v-for="ach in getAchievements(PostSectionEnum.Science)"
                 :key="ach.createdAt"
@@ -206,6 +206,7 @@
                 </q-item-section>
               </q-item>
             </q-card-section>
+            <q-item v-else>Достижений пока нет</q-item>
           </q-card>
         </q-expansion-item>
 
@@ -214,10 +215,10 @@
           expand-separator
           icon="fitness_center"
           label="Достижения в спорте"
-          :caption="'x'"
+          :caption="`x${getAchievements(PostSectionEnum.Sport).length.toString()}`"
         >
           <q-card>
-            <q-card-section>
+            <q-card-section v-if="getAchievements(PostSectionEnum.Sport).length != 0">
               <q-item
                 v-for="ach in getAchievements(PostSectionEnum.Sport)"
                 :key="ach.createdAt"
@@ -238,6 +239,7 @@
                 </q-item-section>
               </q-item>
             </q-card-section>
+            <q-item v-else>Достижений пока нет</q-item>
           </q-card>
         </q-expansion-item>
 
@@ -246,10 +248,10 @@
           expand-separator
           icon="palette"
           label="Достижения в творчестве"
-          :caption="'x'"
+          :caption="`x${getAchievements(PostSectionEnum.Creation).length.toString()}`"
         >
           <q-card>
-            <q-card-section>
+            <q-card-section v-if="getAchievements(PostSectionEnum.Creation).length != 0">
               <q-item
                 v-for="ach in getAchievements(PostSectionEnum.Creation)"
                 :key="ach.createdAt"
@@ -270,6 +272,7 @@
                 </q-item-section>
               </q-item>
             </q-card-section>
+            <q-item v-else>Достижений пока нет</q-item>
           </q-card>
         </q-expansion-item>
 
@@ -278,10 +281,10 @@
           expand-separator
           icon="volunteer_activism"
           label="Достижения в волонтерстве"
-          :caption="'x'"
+          :caption="`x${getAchievements(PostSectionEnum.Volunteering).length.toString()}`"
         >
           <q-card>
-            <q-card-section>
+            <q-card-section v-if="getAchievements(PostSectionEnum.Volunteering).length != 0">
               <q-item
                 v-for="ach in getAchievements(PostSectionEnum.Volunteering)"
                 :key="ach.createdAt"
@@ -302,6 +305,7 @@
                 </q-item-section>
               </q-item>
             </q-card-section>
+            <q-item v-else>Достижений пока нет</q-item>
           </q-card>
         </q-expansion-item>
       </q-list>
