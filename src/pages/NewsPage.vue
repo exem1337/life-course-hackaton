@@ -30,6 +30,20 @@
             map-options
             input-debounce="0"
             :options="universities"
+            style="width: 250px; margin-right: 8px"
+          />
+          <q-select
+            v-model="filters.section"
+            filled
+            use-input
+            use-chips
+            multiple
+            label="Секция"
+            emit-value
+            clearable
+            stack-label
+            :options="Object.values(PostSectionEnum)"
+            input-debounce="0"
             style="width: 250px"
           />
         </div>
@@ -79,6 +93,7 @@ import AppLoader from 'components/AppLoader.vue'
 import { IUniversity } from 'src/models/university.model'
 import { LocalitiesApiService } from 'src/services/api/localitiesApi.service'
 import { useUserStore } from 'stores/user'
+import { PostSectionEnum } from 'src/enums/postSection.enum';
 
 const posts = ref<Array<IPost>>([]);
 const modalManager = inject<ModalManager>(ModalManager.getServiceName());
@@ -86,6 +101,7 @@ const isLoading = ref<boolean>(false);
 const store = useUserStore();
 const filters = reactive<IPostsFilters>({
   university: [],
+  section: [],
 });
 
 const universities = ref<Array<IUniversity>>([]);
@@ -131,6 +147,7 @@ watch(
 onBeforeMount(async () => {
   universities.value = await LocalitiesApiService.loadAllUniversities();
   filters.university = [store.getUniversity]
+  filters.section = []
   await loadData();
 })
 </script>
@@ -144,6 +161,7 @@ onBeforeMount(async () => {
 
     &--filters {
       margin-bottom: 20px;
+      display: flex;
     }
   }
 }

@@ -2,8 +2,16 @@
   <div class="offer-card page-wrapper">
     <BaseWrapper>
       <template #headerText>Вакансии</template>
+      <template #headerIcons>
+        <slot name="headerIcons" />
+      </template>
       <template #content>
-        <div class="q-pa-md row items-start q-gutter-md">
+        <div
+          v-for="offer in offers"
+          :key="offer.id"
+          class="q-px-md q-py-sm row items-start q-gutter-md"
+          @click="onOfferClick(offer.id)"
+        >
           <q-card
             class="my-card"
             flat
@@ -20,19 +28,28 @@
 
             <q-separator />
 
-            <q-card-actions>
-              <q-btn
-                flat
-                round
-                icon="event"
-                class="offer-icon"
-              />
-              <q-btn
-                flat
-                class="offer-icon"
-              >
-                {{ formatDate({ date: new Date(offer.createdAt)},{}) }}
-              </q-btn>
+            <q-card-actions class="justify-between">
+              <div>
+                <q-btn
+                  flat
+                  round
+                  icon="event"
+                  class="offer-icon"
+                />
+                <q-btn
+                  flat
+                  class="offer-icon"
+                >
+                  {{ formatDate({ date: new Date(offer.createdAt)},{}) }}
+                </q-btn>
+              </div>
+              <div>
+                Откликнулось: {{ offer.users.length }}
+                <q-icon
+                  name="person"
+                  size="25px"
+                />
+              </div>
             </q-card-actions>
           </q-card>
         </div>
@@ -46,11 +63,15 @@ import { IOffer } from 'src/models/offer.model';
 import { formatPersonName } from 'src/utils/nameFormat.util';
 import { formatDate } from 'src/utils/formatDate'
 import BaseWrapper from './BaseWrapper.vue';
-
+import { useRouter } from 'vue-router';
+const router = useRouter();
 defineProps<{
-    offer: IOffer
+  offers: Array<IOffer>
 }>()
-
+function onOfferClick(offerID: number) {
+  console.log(offerID);
+  router.push(`/offers/${offerID}`);
+}
 </script>
 
 <style lang="scss" scoped>

@@ -24,7 +24,7 @@ const props = defineProps<{
   type?: string;
 }>();
 
-const emits = defineEmits<{
+const emits = defineEmits <{
   (e: 'remove', value: IAddImage): void;
   (e: 'add', value: IAddImage): void;
 }>()

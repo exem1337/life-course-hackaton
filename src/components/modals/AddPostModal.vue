@@ -7,6 +7,7 @@ import { useUserStore } from 'stores/user'
 import AppImageUploader from 'components/AppImageUploader.vue'
 import { IAddImage } from 'src/models/base/image.model'
 import { PostsApiService } from 'src/services/api/postsApi.service'
+import { PostSectionEnum } from 'src/enums/postSection.enum';
 
 const emits = defineEmits<{(e: 'confirm', value: boolean): void }>();
 const store = useUserStore();
@@ -17,6 +18,7 @@ const postInfo = reactive<IPostCreate>({
   author_id: store.user?.id,
   tags: [],
   file_keys: [],
+  section: '',
 });
 const isLoading = ref<boolean>(false);
 const tagsString = ref<string>('');
@@ -59,6 +61,13 @@ async function onCreate(): Promise<void> {
         label="Текст"
       />
       <AppImageUploader @add="onAddImage" />
+      <q-select
+        v-model="postInfo.section"
+        type="text"
+        :options="Object.values(PostSectionEnum)"
+        outlined
+        label="Секция"
+      />
       <q-input
         v-model="tagsString"
         type="text"
