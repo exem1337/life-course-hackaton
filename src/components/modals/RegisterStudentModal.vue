@@ -94,7 +94,7 @@ watch(
   () => studentData.department_id,
   async () => {
     studentData.direction_id = null;
-    directions.value = (await LocalitiesApiService.loadDepartment(studentData.faculty_id))?.directions;
+    directions.value = (await LocalitiesApiService.loadDepartment(studentData.department_id))?.directions;
   },
 )
 

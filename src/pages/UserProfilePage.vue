@@ -176,7 +176,12 @@
         >
           <q-card>
             <q-card-section>
-              список тут
+              <q-card
+                v-for="ach in getAchievements(PostSectionEnum.Science)"
+                :key="ach.createdAt"
+              >
+                {{ ach.event.name }}
+              </q-card>
             </q-card-section>
           </q-card>
         </q-expansion-item>
@@ -188,7 +193,12 @@
         >
           <q-card>
             <q-card-section>
-              список тут
+              <q-card
+                v-for="ach in getAchievements(PostSectionEnum.Sport)"
+                :key="ach.createdAt"
+              >
+                {{ ach.event.name }}
+              </q-card>
             </q-card-section>
           </q-card>
         </q-expansion-item>
@@ -200,7 +210,12 @@
         >
           <q-card>
             <q-card-section>
-              список тут
+              <q-card
+                v-for="ach in getAchievements(PostSectionEnum.Creation)"
+                :key="ach.createdAt"
+              >
+                {{ ach.event.name }}
+              </q-card>
             </q-card-section>
           </q-card>
         </q-expansion-item>
@@ -212,7 +227,12 @@
         >
           <q-card>
             <q-card-section>
-              список тут
+              <q-card
+                v-for="ach in getAchievements(PostSectionEnum.Volunteering)"
+                :key="ach.createdAt"
+              >
+                {{ ach.event.name }}
+              </q-card>
             </q-card-section>
           </q-card>
         </q-expansion-item>
@@ -273,7 +293,7 @@ import PostComponent from 'components/profile/PostComponent.vue';
 import { IPost } from 'src/models/profile/post.model';
 import { useRoute } from 'vue-router';
 import { computed, inject, onBeforeMount, ref, watch } from 'vue'
-import { IUser } from 'src/models/user.model';
+import { IStudentAchievement, IUser } from 'src/models/user.model'
 import { ProfileApiService } from 'src/services/api/profileApi.service';
 import { FilesApiService } from 'src/services/api/filesApi.service';
 import { IGalleryItem } from 'src/models/profile/galleryImage.model';
@@ -292,6 +312,7 @@ import { OfferApiService } from 'src/services/api/offerApi.service';
 import OfferCard from 'components/OfferCard.vue';
 import { IUniversity } from 'src/models/university.model'
 import { LocalitiesApiService } from 'src/services/api/localitiesApi.service'
+import { PostSectionEnum } from 'src/enums/postSection.enum'
 
 const modalManager = inject<ModalManager>(ModalManager.getServiceName());
 
@@ -325,6 +346,11 @@ const groups = ref({
 })
 const fileInput = ref<HTMLInputElement>();
 const fileInputAvatar = ref<HTMLInputElement>();
+
+function getAchievements(type: PostSectionEnum): Array<IStudentAchievement> {
+  return profile.value?.achievements?.filter((ach) => ach.event?.section === type) || [];
+}
+
 function onAttachFile(): void {
   fileInput.value?.click();
 }

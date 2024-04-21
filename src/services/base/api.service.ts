@@ -21,9 +21,11 @@ async function fetchData<T>(url: string, config?: IAxiosRequestConfig<unknown> |
     if (config?.showError) {
       ErrorService.showError(errorMessage);
     }
-
-    throw new Error(errorMessage);
   }
+
+  return new Promise<T>(() => {
+    //
+  });
 }
 
 async function postData<T>(url: string, data?: unknown, config?: IAxiosRequestConfig<unknown> | undefined): Promise<T> {
@@ -35,9 +37,11 @@ async function postData<T>(url: string, data?: unknown, config?: IAxiosRequestCo
     if (config?.showError) {
       ErrorService.showError(errorMessage);
     }
-
-    throw new Error(errorMessage);
   }
+
+  return new Promise<T>(() => {
+    //
+  });
 }
 
 async function pacthData<T>(url: string, data?: unknown, config?: IAxiosRequestConfig<unknown> | undefined): Promise<T> {
@@ -49,9 +53,11 @@ async function pacthData<T>(url: string, data?: unknown, config?: IAxiosRequestC
     if (config?.showError) {
       ErrorService.showError(errorMessage);
     }
-
-    throw new Error(errorMessage);
   }
+
+  return new Promise<T>(() => {
+    //
+  });
 }
 
 async function deleteData<T>(url: string, config?: IAxiosRequestConfig<unknown> | undefined): Promise<T> {
@@ -63,9 +69,11 @@ async function deleteData<T>(url: string, config?: IAxiosRequestConfig<unknown> 
     if (config?.showError) {
       ErrorService.showError(errorMessage);
     }
-
-    throw new Error(errorMessage);
   }
+
+  return new Promise<T>(() => {
+    //
+  });
 }
 
 export default {

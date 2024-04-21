@@ -2,6 +2,12 @@
   <div class="university-page page-wrapper">
     <div class="university-page--title">
       <div class="university-page--title__image" />
+      <input
+        ref="fileInput"
+        type="file"
+        style="display: none"
+        @change="attachFile"
+      />
       <div class="university-page--title__text">
         {{ university?.fullname }} <br>
         <div class="university-page--title__text--inner">
@@ -19,8 +25,15 @@
       </div>
     </div>
     <div class="university-page--gallery">
-      <p>Галерея ВУЗа</p>
+      <div class="flex">
+        <p>Галерея ВУЗа</p>
+        <q-btn @click="onAttachFile">Добавить фотографию</q-btn>
+      </div>
+      <EmptyBanner v-if="!images?.length">
+        <template #title>Пока нет картинок</template>
+      </EmptyBanner>
       <q-carousel
+        v-else
         v-model="slide"
         animated
         navigation
@@ -33,25 +46,45 @@
         @mouseleave="autoplay = true"
       >
         <q-carousel-slide
-          :name="1"
-          img-src="https://cdn.quasar.dev/img/mountains.jpg"
-        />
-        <q-carousel-slide
-          :name="2"
-          img-src="https://cdn.quasar.dev/img/parallax1.jpg"
-        />
-        <q-carousel-slide
-          :name="3"
-          img-src="https://cdn.quasar.dev/img/parallax2.jpg"
-        />
-        <q-carousel-slide
-          :name="4"
-          img-src="https://cdn.quasar.dev/img/quasar.jpg"
+          v-for="(image, index) in images"
+          :key="index"
+          :name="index"
+          :img-src="image"
         />
       </q-carousel>
     </div>
     <div class="university-page--events">
-      <p>Мероприятия</p>
+      <div class="university-page--events__title">
+        <p>Мероприятия</p>
+        <q-btn
+          v-if="isUserOwnsTheUniversity"
+          @click="onCreateEvent"
+        >
+          Создать мероприятие
+        </q-btn>
+      </div>
+      <EmptyBanner v-if="!events?.length">
+        <template #title>Пока нет мероприятий</template>
+        <template #description>{{ isUserOwnsTheUniversity ? 'Создайте свое мероприятие и формируйте список участников' : 'Следите за обновлениями' }}</template>
+        <template #button>
+          <q-btn
+            v-if="isUserOwnsTheUniversity"
+            class="bg-primary text-white"
+          >
+            Создать мероприятие
+          </q-btn>
+        </template>
+      </EmptyBanner>
+      <div
+        v-else
+        class="university-page--events__list"
+      >
+        <EventItem
+          v-for="event in events"
+          :key="event.id"
+          :event="event"
+        />
+      </div>
     </div>
     <div class="university-page--faculties">
       <div class="flex">
@@ -338,6 +371,12 @@ import CreateDirectionModal from 'components/modals/CreateDirectionModal.vue'
 import UniversityStudentsModal from 'components/modals/UniversityStudentsModal.vue'
 import { wrapLoader } from 'src/utils/loaderWrapper.util'
 import { useUserStore } from 'stores/user'
+import { IEvent } from 'src/models/event.model'
+import EventItem from 'components/EventItem.vue'
+import EventCreateModal from 'components/modals/EventCreateModal.vue'
+import { FileService } from 'src/services/base/file.service'
+import { ProfileApiService } from 'src/services/api/profileApi.service'
+
 const route = useRoute();
 const slide = ref<number>(1);
 const studentsCount = ref<number>();
@@ -348,6 +387,17 @@ const modalManager = inject<ModalManager>(ModalManager.getServiceName());
 const universityStudents = ref<Array<IUniversityStudent>>([]);
 const isAllStudentsLoading = ref<boolean>(false);
 const isUserOwnsTheUniversity = computed<boolean>(() => !!store.adminUniversity?.id && store.adminUniversity?.id === university.value?.id);
+const events = ref<Array<IEvent>>([]);
+const fileInput = ref<HTMLInputElement>();
+const images = ref<Array<string>>([]);
+
+async function onCreateEvent(): Promise<void> {
+  await modalManager?.openAsyncModal<typeof EventCreateModal, boolean>(EventCreateModal, {
+    attrs: {
+      universityId: university.value?.id || 0,
+    },
+  }).then(async (res) => !!res && await loadData());
+}
 
 async function onOpenAllStudentsModal(): Promise<void> {
   await modalManager?.openAsyncModal(UniversityStudentsModal, {
@@ -521,10 +571,40 @@ async function onDeleteGroup(id: number): Promise<void> {
   });
 }
 
+async function attachFile(event: Event): Promise<void> {
+  const target = event.target as HTMLInputElement;
+
+  if (!target.files?.length) {
+    return;
+  }
+
+  const salt = await FileService.uploadFile([target.files[0]]);
+  await ProfileApiService.addUniversityImage(salt, university.value?.id || 0);
+  await loadData();
+}
+
+function onAttachFile(): void {
+  fileInput.value?.click();
+}
+
 async function loadData(): Promise<void> {
   const universityId = Number(route.params.universityId);
   university.value = await LocalitiesApiService.loadUniversity(universityId);
   studentsCount.value = await LocalitiesApiService.getCountStudentsInLocalitiesId(universityId) || 0;
+  events.value = await LocalitiesApiService.getEvents({
+    fields: {
+      university_id: {
+        operator: 'eq',
+        value: [universityId],
+      },
+    },
+    includes: [
+      {
+        association: 'participants',
+      },
+    ],
+  });
+  images.value = await LocalitiesApiService.loadUniversityImages(universityId);
   await wrapLoader(isAllStudentsLoading, async () => {
     universityStudents.value = await LocalitiesApiService.loadUniversityStudents(universityId);
   });
@@ -599,6 +679,19 @@ onBeforeMount(async () => {
       line-height: 28px;
       font-weight: 500;
       margin-bottom: 16px;
+    }
+
+    &__title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    &__list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
   }
 

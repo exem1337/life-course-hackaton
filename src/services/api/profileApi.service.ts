@@ -24,8 +24,14 @@ export class ProfileApiService {
 
   public static async editProfileAvatar(salt: string, id: number): Promise<void> {
     return await api.patch('/users/updateAvatar', {
-      id: id,
+      id,
       avatar_salt: salt,
+    });
+  }
+
+  public static async addUniversityImage(salt: string, id: number): Promise<void> {
+    return await api.post(`/universities/university/${id}/content`, {
+      content_salt: salt,
     });
   }
 }
