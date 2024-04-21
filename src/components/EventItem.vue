@@ -128,4 +128,8 @@ span {
     margin-right: 16px;
   }
 }
+
+.text-h6 {
+  font-weight: 500;
+}
 </style>

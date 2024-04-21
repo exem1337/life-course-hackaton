@@ -1,5 +1,9 @@
 <template>
-  <div class="university-page page-wrapper">
+  <AppLoader v-if="isDataLoading" />
+  <div
+    v-else
+    class="university-page page-wrapper"
+  >
     <div class="university-page--title">
       <div class="university-page--title__image" />
       <input
@@ -27,7 +31,12 @@
     <div class="university-page--gallery">
       <div class="flex">
         <p>Галерея ВУЗа</p>
-        <q-btn @click="onAttachFile">Добавить фотографию</q-btn>
+        <q-btn
+          v-if="isUserOwnsTheUniversity"
+          @click="onAttachFile"
+        >
+          Добавить фотографию
+        </q-btn>
       </div>
       <EmptyBanner v-if="!images?.length">
         <template #title>Пока нет картинок</template>
@@ -376,6 +385,7 @@ import EventItem from 'components/EventItem.vue'
 import EventCreateModal from 'components/modals/EventCreateModal.vue'
 import { FileService } from 'src/services/base/file.service'
 import { ProfileApiService } from 'src/services/api/profileApi.service'
+import AppLoader from 'components/AppLoader.vue'
 
 const route = useRoute();
 const slide = ref<number>(1);
@@ -390,6 +400,7 @@ const isUserOwnsTheUniversity = computed<boolean>(() => !!store.adminUniversity?
 const events = ref<Array<IEvent>>([]);
 const fileInput = ref<HTMLInputElement>();
 const images = ref<Array<string>>([]);
+const isDataLoading = ref<boolean>(false);
 
 async function onCreateEvent(): Promise<void> {
   await modalManager?.openAsyncModal<typeof EventCreateModal, boolean>(EventCreateModal, {
@@ -587,7 +598,11 @@ function onAttachFile(): void {
   fileInput.value?.click();
 }
 
-async function loadData(): Promise<void> {
+async function loadData(useLoader = false): Promise<void> {
+  if (useLoader) {
+    isDataLoading.value = true;
+  }
+
   const universityId = Number(route.params.universityId);
   university.value = await LocalitiesApiService.loadUniversity(universityId);
   studentsCount.value = await LocalitiesApiService.getCountStudentsInLocalitiesId(universityId) || 0;
@@ -608,10 +623,12 @@ async function loadData(): Promise<void> {
   await wrapLoader(isAllStudentsLoading, async () => {
     universityStudents.value = await LocalitiesApiService.loadUniversityStudents(universityId);
   });
+
+  isDataLoading.value = false;
 }
 
 onBeforeMount(async () => {
-  await loadData();
+  await loadData(true);
 });
 </script>
 

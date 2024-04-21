@@ -36,4 +36,8 @@ export class PostsApiService {
   public static async deletePost(postId: number): Promise<void> {
     return await api.delete(`/publications/publication/${postId}`);
   }
+
+  public static async getFavouritePosts(): Promise<Array<IPost>> {
+    return await api.get('/publications/publication/favorites');
+  }
 }

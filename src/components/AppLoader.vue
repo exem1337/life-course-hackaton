@@ -1,8 +1,8 @@
 <template>
   <div class="loader">
-    <q-spinner-gears 
-      size="50px" 
-      color="primary" 
+    <q-spinner-gears
+      size="50px"
+      color="primary"
     />
   </div>
 </template>
@@ -12,8 +12,10 @@
 
 <style lang="scss" scoped>
 .loader {
-  top: 50%;
-  right: 50%;
-  position: fixed;
+  width: 100%;
+  height: 20vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
 }
 </style>

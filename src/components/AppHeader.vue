@@ -47,6 +47,12 @@
         Новости
       </router-link>
       <router-link
+        v-if="store.isLoggedIn && store.getRole !== EUserRole.Employer"
+        to="/news/favourites"
+      >
+        Избранное
+      </router-link>
+      <router-link
         v-if="store.isLoggedIn"
         to="/offers"
       >
@@ -116,6 +122,7 @@ import { QSelect } from 'quasar'
 import { ProfileApiService } from 'src/services/api/profileApi.service'
 import { IUser } from 'src/models/user.model'
 import { wrapLoader } from 'src/utils/loaderWrapper.util'
+import { EUserRole } from 'src/enums/userTypes.enum'
 
 const store = useUserStore();
 const modalManager = inject<ModalManager>(ModalManager.getServiceName());
