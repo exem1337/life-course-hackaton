@@ -1,6 +1,6 @@
 <template>
   <div class="top-students">
-    <h3>Топ 10 студентов сайта</h3>
+    <h3 v-if="topStudents?.length">Топ 10 студентов сайта</h3>
     <div class="top-students--students">
       <q-card
         v-for="(student, index) in topStudents"
