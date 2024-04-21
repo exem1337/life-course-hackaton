@@ -3,18 +3,21 @@
     <BaseWrapper v-if="!isLoading && offer">
       <template #headerText> <h4>Вакансия</h4>  </template>
       <template #headerIcons>
-        <q-btn
-          size="md"
-          color="primary"
-          round
-          icon="edit"
-        />
-        <q-btn
-          size="md"
-          color="primary"
-          round
-          icon="delete"
-        />
+        <div v-if="offer.organization.owner_id === store.user?.id">
+          <q-btn
+            size="md"
+            class="q-mr-md"
+            color="primary"
+            round
+            icon="edit"
+          />
+          <q-btn
+            size="md"
+            color="primary"
+            round
+            icon="delete"
+          />
+        </div>
         <q-btn
           :disable="offer.organization.owner_id !== store.user?.id"
           :label='"Откликнулось " + offer?.users?.length'
