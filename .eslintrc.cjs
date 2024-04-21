@@ -131,5 +131,6 @@ module.exports = {
     'func-call-spacing': 'off',
     'no-unused-vars': 'off',
     'no-explicit-any': 'off',
+    'object-shorthand': 'off',
   },
 }

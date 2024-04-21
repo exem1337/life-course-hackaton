@@ -10,7 +10,7 @@
       <q-item class="profile-post-container__card">
         <q-item-section avatar>
           <q-avatar>
-            <img src="https://klev.club/uploads/posts/2023-10/1698733776_klev-club-p-kartinki-anime-devushki-milie-50.jpg">
+            <q-img :src="avatar" />
           </q-avatar>
         </q-item-section>
 
@@ -117,7 +117,7 @@ const likes = ref<number>(props.post?.likes);
 const store = useUserStore();
 const isPostCreatedByCurrentUser = computed<boolean>(() => props.post.author_id === store.user?.id);
 const modalManager = inject<ModalManager>(ModalManager.getServiceName());
-
+const avatar = ref<string>('');
 function showRightPanelComment() {
   showPanel.value = !showPanel.value;
 }
@@ -146,6 +146,10 @@ onBeforeMount(async () => {
   images.value = await Promise.all(props.post?.file_keys?.map(
     async (fileKey: string) => `data:image/png;base64,${await FileService.getFileBase64(fileKey)}`),
   );
+
+  if (props.post?.author.avatar_salt != null) {
+    avatar.value = `data:image/png;base64,${await FileService.getFileBase64(props.post?.author.avatar_salt)}`
+  }
 })
 </script>
 

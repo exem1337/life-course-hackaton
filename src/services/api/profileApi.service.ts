@@ -21,4 +21,11 @@ export class ProfileApiService {
       author_id: id,
     });
   }
+
+  public static async editProfileAvatar(salt: string, id: number): Promise<void> {
+    return await api.patch('/users/updateAvatar', {
+      id: id,
+      avatar_salt: salt,
+    });
+  }
 }

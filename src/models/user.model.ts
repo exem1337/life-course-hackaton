@@ -13,6 +13,7 @@ export interface IUser {
   email: string;
   password: string;
   locality_id: 1,
+  rating: number;
   createdAt: string;
   updatedAt: string;
   groups: Array<IGroup>;
