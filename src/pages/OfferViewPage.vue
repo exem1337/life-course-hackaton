@@ -15,9 +15,14 @@
           round
           icon="delete"
         />
-        <p>Откликнулось: {{ offer?.users?.length }}</p>
         <q-btn
-          v-if="role !== EUserRole.Employer"
+          :disable="offer.organization.owner_id !== store.user?.id"
+          :label='"Откликнулось " + offer?.users?.length'
+          color="primary"
+          @click="onOpenAllStudentsModal"
+        />
+        <q-btn
+          v-if="role === EUserRole.User"
           v-model="isClicked"
           flat
           color="primary"
@@ -69,13 +74,15 @@ import { IOffer } from 'src/models/offer.model';
 import { formatPersonName } from 'src/utils/nameFormat.util';
 import { formatDate } from 'src/utils/formatDate'
 import BaseWrapper from 'src/components/BaseWrapper.vue';
-import { computed, onBeforeMount, ref } from 'vue';
+import { computed, inject, onBeforeMount, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { OfferApiService } from 'src/services/api/offerApi.service';
 import { useUserStore } from 'src/stores/user';
 import { wrapLoader } from 'src/utils/loaderWrapper.util';
 import AppLoader from 'src/components/AppLoader.vue'
 import { EUserRole } from 'src/enums/userTypes.enum';
+import ModalManager from 'src/services/base/modalManager.service';
+import OfferListStudents from 'components/modals/OfferListStudents.vue';
 
 const offer = ref<IOffer>()
 const route = useRoute();
@@ -83,6 +90,16 @@ const store = useUserStore();
 const isClicked = false;
 const isLoading = ref(false)
 const role = ref<string>('')
+const modalManager = inject<ModalManager>(ModalManager.getServiceName());
+async function onOpenAllStudentsModal(): Promise<void> {
+  await modalManager?.openAsyncModal(OfferListStudents, {
+    attrs: {
+      title: 'Список откликов студентов',
+      students: offer.value?.users,
+    },
+  });
+}
+
 if (store.user.roles.length !== 0) {
   role.value = store.user.roles[0].name
 }
