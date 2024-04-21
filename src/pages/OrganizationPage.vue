@@ -21,6 +21,7 @@
           class="profile-page--title__avatar-edit"
         >
           <q-btn
+            v-if="isUserOwnsOrganization"
             round
             size="lg"
             icon="edit"
@@ -43,6 +44,7 @@
         class="profile-page--title__right-panel q-ml-auto q-mb-auto"
       >
         <q-btn
+          v-if="isUserOwnsOrganization"
           round
           size="10px"
           color="primary"
@@ -61,6 +63,7 @@
       </template>
       <template #headerIcons>
         <q-btn
+          v-if="isUserOwnsOrganization"
           round
           size="md"
           icon="edit"
@@ -75,6 +78,7 @@
     <OfferCard :offers="(organization as IOrganization)?.vacancies">
       <template #headerIcons>
         <q-btn
+          v-if="isUserOwnsOrganization"
           round
           size="md"
           icon="add"
@@ -89,17 +93,20 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router'
 import { IOrganization } from 'src/models/region.model'
-import { inject, onBeforeMount, ref } from 'vue'
+import { computed, inject, onBeforeMount, ref } from 'vue'
 import { LocalitiesApiService } from 'src/services/api/localitiesApi.service'
 import BaseWrapper from 'components/BaseWrapper.vue'
 import OfferCard from 'components/OfferCard.vue'
 import ModalManager from 'src/services/base/modalManager.service'
 import CreateVacancyModal from 'components/modals/CreateVacancyModal.vue'
+import { useUserStore } from 'stores/user'
 
 const route = useRoute();
 const organization = ref<IOrganization>();
 const organizationId = route.params.id;
 const modalManager = inject<ModalManager>(ModalManager.getServiceName());
+const store = useUserStore();
+const isUserOwnsOrganization = computed(() => organization.value?.owner_id === store.user?.id);
 
 async function loadData() {
   organization.value = await LocalitiesApiService.loadOrganizaiton(+organizationId);
