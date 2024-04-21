@@ -37,33 +37,44 @@
                   class="rout"
                   caption
                 >
-                  Университет:
+                  ВУЗ:
                   <router-link
                     class="router-link"
-                    :to="/university/ + groups.universityId"
+                    :to="/university/ + `${adminUniversity?.id || groups.universityId}`"
                   >
-                    {{ groups.university }}
+                    {{ adminUniversity?.fullname || groups.university }}
                   </router-link>
                 </q-item-label>
                 <q-item-label
+                  v-if="adminUniversity?.id"
+                  class="row"
+                  caption
+                >
+                  Администратор ВУЗа
+                </q-item-label>
+                <q-item-label
+                  v-if="!adminUniversity?.id"
                   class="row"
                   caption
                 >
                   Факультет: <div class="router-link--no-href">{{ groups.faculty }}</div>
                 </q-item-label>
                 <q-item-label
+                  v-if="!adminUniversity?.id"
                   class="row"
                   caption
                 >
                   Кафедра: <div class="router-link--no-href">{{ groups.department }}</div>
                 </q-item-label>
                 <q-item-label
+                  v-if="!adminUniversity?.id"
                   class="row"
                   caption
                 >
                   Поток: <div class="router-link--no-href">{{ groups.stream }}</div>
                 </q-item-label>
                 <q-item-label
+                  v-if="!adminUniversity?.id"
                   class="row"
                   caption
                 >
@@ -126,7 +137,7 @@
       </GalleryComponent>
     </div>
     <div
-      v-if="role !== EUserRole.Employer"
+      v-if="!adminUniversity?.id && role !== EUserRole.Employer"
       class="profile-page--achievements"
     >
       <p>Достижения</p>
@@ -256,7 +267,11 @@ import { EUserRole } from 'src/enums/userTypes.enum';
 import { IOffer } from 'src/models/offer.model';
 import { OfferApiService } from 'src/services/api/offerApi.service';
 import OfferCard from 'components/OfferCard.vue';
+import { IUniversity } from 'src/models/university.model'
+import { LocalitiesApiService } from 'src/services/api/localitiesApi.service'
+
 const modalManager = inject<ModalManager>(ModalManager.getServiceName());
+
 function onOpenLoginModal(): void {
   modalManager?.openAsyncModal(GalleryAllModal, {
     attrs: {
@@ -275,6 +290,7 @@ const gallery = ref<IGalleryItem[]>([]);
 const userPosts = ref<Array<IPost>>([]);
 const isDataLoading = ref<boolean>(false);
 const isUserProfile = computed<boolean>(() => profile.value?.id === store.user?.id);
+const adminUniversity = ref<IUniversity>();
 
 const groups = ref({
   universityId: '',
@@ -311,6 +327,11 @@ async function loadData(): Promise<void> {
     profile.value = await ProfileApiService.getProfileId(route.params.userId as string);
     userPosts.value = await PostsApiService.loadUserPosts(Number(route.params.userId));
     const url = await FilesApiService.getFile(profile.value?.avatar_salt);
+
+    if (profile.value.roles?.[0].name === EUserRole.Admin) {
+      adminUniversity.value = await LocalitiesApiService.getAdminUniversity(profile.value?.id);
+    }
+
     avatarUrl.value = `data:image/png;base64,${url}`
     if (profile.value?.groups.length !== 0) {
       groups.value = {

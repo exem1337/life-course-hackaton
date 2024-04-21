@@ -41,3 +41,12 @@ export interface IUniCreateRequest {
   address: string;
   locality_id: number | null;
 }
+
+export interface IUniCreateResponse {
+  fullname: string;
+  id: number;
+  shortname: string;
+  description: string;
+  address: string;
+  locality_id: number | null;
+}

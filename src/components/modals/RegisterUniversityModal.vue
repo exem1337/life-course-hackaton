@@ -2,10 +2,12 @@
 import BaseModal from 'components/modals/base/BaseModal.vue'
 import { computed, onBeforeMount, reactive, ref } from 'vue'
 import { wrapLoader } from 'src/utils/loaderWrapper.util'
-import { IUniCreate, IUniCreateRequest } from 'src/models/user/student.model'
+import { IStudentCreate, IUniCreate, IUniCreateRequest } from 'src/models/user/student.model'
 import { IRegionLocality } from 'src/models/region.model'
 import { LocalitiesApiService } from 'src/services/api/localitiesApi.service'
 import BaseWrapper from 'components/BaseWrapper.vue'
+import { AuthApiService } from 'src/services/api/authApi.service'
+// import { AuthApiService } from 'src/services/api/authApi.service'
 
 const emits = defineEmits<{(e: 'confirm'): void }>();
 
@@ -37,7 +39,9 @@ const isButtonDisabled = computed<boolean>(() =>
 
 async function onRegister(): Promise<void> {
   await wrapLoader(isLoading, async () => {
-    // await AuthApiService.registerJobGiver(personInfo);
+    const { id: uniId } = await LocalitiesApiService.createUniversity(universityInfo);
+    const { id: userId } = await AuthApiService.registerStudent(personInfo as IStudentCreate, true);
+    await LocalitiesApiService.setUniversityAdmin(uniId, userId);
     emits('confirm');
   });
 }

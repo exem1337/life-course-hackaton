@@ -1,11 +1,14 @@
 import { ICity, IRegion, IRegionLocality } from 'src/models/region.model'
 import api from 'src/services/base/api.service';
 import {
+  ICreateDirection,
   IDirectionFullResponse,
   IFacultyDepartmentFullResponse,
   IFacultyFullResponse, IUniversity,
-  IUniversityFullResponse,
+  IUniversityFullResponse, IUniversityStudent,
 } from 'src/models/university.model'
+import { FileService } from 'src/services/base/file.service'
+import { IUniCreateRequest, IUniCreateResponse } from 'src/models/user/student.model'
 
 export class LocalitiesApiService {
   public static async loadRegions(): Promise<Array<IRegion>> {
@@ -42,5 +45,98 @@ export class LocalitiesApiService {
 
   public static async getCountStudentsInLocalitiesId(localityId: number | null): Promise<number> {
     return await api.get(`/universities/university/${localityId}/students`);
+  }
+
+  public static async editDepartment(departmentId: number, name: string): Promise<void> {
+    return await api.patch(`/universities/department/${departmentId}`, {
+      fullname: name,
+    });
+  }
+
+  public static async createFaculty(universityID: number, facultyName: string): Promise<void> {
+    return await api.post('/universities/faculty', {
+      university_id: universityID,
+      fullname: facultyName,
+    });
+  }
+
+  public static async createDirection(data: ICreateDirection): Promise<void> {
+    return await api.post('/universities/direction', {
+      department_id: data.departmentId,
+      fullname: data.fullname,
+      specialty_code: data.specialityCode,
+    });
+  }
+
+  public static async deleteDepartment(departmentId: number): Promise<void> {
+    return await api.delete(`/universities/department/${departmentId}`);
+  }
+
+  public static async createDepartment(id: number, name: string): Promise<void> {
+    return await api.post('/universities/department', {
+      faculty_id: id,
+      fullname: name,
+    });
+  }
+
+  public static async createGroup(id: number, name: string): Promise<void> {
+    return await api.post('/universities/group', {
+      direction_id: id,
+      fullname: name,
+    });
+  }
+
+  public static async editDirection(id: number, name: string): Promise<void> {
+    return await api.patch(`/universities/direction/${id}`, {
+      fullname: name,
+    });
+  }
+
+  public static async deleteDirection(id: number): Promise<void> {
+    return await api.delete(`/universities/direction/${id}`);
+  }
+
+  public static async editGroup(id: number, name: string): Promise<void> {
+    return await api.patch(`/universities/group/${id}`, {
+      fullname: name,
+    });
+  }
+
+  public static async deleteGroup(id: number): Promise<void> {
+    return await api.delete(`/universities/group/${id}`);
+  }
+
+  public static async editFaculty(id: number, name: string): Promise<void> {
+    return await api.patch(`/universities/faculty/${id}`, {
+      fullname: name,
+    });
+  }
+
+  public static async deleteFaculty(id: number): Promise<void> {
+    return await api.delete(`/universities/faculty/${id}`);
+  }
+
+  public static async loadUniversityStudents(id: number): Promise<Array<IUniversityStudent>> {
+    let students = await api.get<Array<IUniversityStudent>>(`/universities/university/${id}/studentsAll`);
+    students = await Promise.all(students.map(async (student: IUniversityStudent) => ({
+      ...student,
+      avatar: `data:image/png;base64,${await FileService.getFileBase64(student.avatar_salt)}`,
+    })))
+    console.log(students)
+    return students;
+  }
+
+  public static async createUniversity(data: IUniCreateRequest): Promise<IUniCreateResponse> {
+    return await api.post('/universities/university', data);
+  }
+
+  public static async setUniversityAdmin(universityId: number, userId: number): Promise<void> {
+    return await api.patch(`/universities/university/university/admin/${universityId}`, {
+      admin_id: userId,
+    });
+  }
+
+  public static async getAdminUniversity(adminId: number): Promise<IUniversity> {
+    return (await api.get<Array<IUniversity>>(`/universities/university/university/admin/${adminId}`))?.[0];
   }
 }

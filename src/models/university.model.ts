@@ -68,3 +68,21 @@ export interface IFacultyDepartmentFullResponse {
 export interface IDirectionFullResponse {
   groups: Array<IDirectionGroup>
 }
+
+export interface ICreateDirection {
+  departmentId: number;
+  specialityCode: string;
+  fullname: string;
+}
+
+export interface IUniversityStudent {
+  id: number;
+  last_name: string;
+  first_name: string;
+  middle_name: string;
+  rating: number;
+  fullname: string;
+  group_id: number;
+  avatar: string;
+  avatar_salt: string;
+}
