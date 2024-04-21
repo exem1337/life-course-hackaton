@@ -111,8 +111,8 @@ async function onOpenAllStudentsModal(): Promise<void> {
 async function onEditOffer(): Promise<void> {
   await modalManager?.openAsyncModal<typeof EditOfferModal, { header: string, description: string }>(EditOfferModal, {
     attrs: {
-      header: offer.value?.header,
-      description: offer.value?.description,
+      header: offer.value?.header || '',
+      description: offer.value?.description || '',
     },
   }).then(async (res) => {
     if (!res) {
