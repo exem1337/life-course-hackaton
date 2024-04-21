@@ -3,4 +3,5 @@ export enum EUserRole {
   Admin = 'admin',
   // eslint-disable-next-line no-unused-vars
   User = 'user',
+  Employer = 'Работодатель',
 }

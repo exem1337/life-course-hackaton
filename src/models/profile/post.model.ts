@@ -24,10 +24,12 @@ export interface IPostCreate {
   tags: Array<string>;
   file_keys: Array<string>;
   university_id?: number;
+  section: string;
 }
 
 export interface IPostsFilters {
-  university?: Array<number>;
+  university?: Array<number> | null;
+  section?: Array<string> | null;
 }
 
 export interface IAssociation {
@@ -40,6 +42,10 @@ export interface IPostsRequestFilters {
       operator: string,
       value: Array<number>,
     },
+    section?: {
+      operator: string,
+      value: Array<string>,
+    }
   },
   includes?: Array<IAssociation>;
 }

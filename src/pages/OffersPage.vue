@@ -1,11 +1,6 @@
 <template>
   <div v-if="!isLoading">
-    <OfferCard
-      v-for="offer in offers"
-      :key="offer.id"
-      :offer="offer"
-      @click="onOfferClick(offer.id)"
-    />
+    <OfferCard :offers="offers" />
   </div>
   <AppLoader v-else />
 </template>
@@ -15,17 +10,11 @@ import OfferCard from 'components/OfferCard.vue'
 import { OfferApiService } from 'src/services/api/offerApi.service'
 import { IOffer } from 'src/models/offer.model'
 import { onBeforeMount, ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { wrapLoader } from 'src/utils/loaderWrapper.util';
 import AppLoader from 'src/components/AppLoader.vue'
 
 const offers = ref<Array<IOffer>>([])
-const router = useRouter();
 const isLoading = ref(false)
-
-function onOfferClick(offerID: number) {
-  router.push(`/offers/${offerID}`)
-}
 onBeforeMount(async () => {
   await wrapLoader(isLoading, async () => {
     offers.value = await OfferApiService.loadOffers()

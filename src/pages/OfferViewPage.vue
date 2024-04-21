@@ -1,10 +1,23 @@
 <template>
   <div class="offer-page page-wrapper">
-    <BaseWrapper v-if="!isLoading && offer"> 
+    <BaseWrapper v-if="!isLoading && offer">
       <template #headerText> <h4>Вакансия</h4>  </template>
       <template #headerIcons>
+        <q-btn
+          size="md"
+          color="primary"
+          round
+          icon="edit"
+        />
+        <q-btn
+          size="md"
+          color="primary"
+          round
+          icon="delete"
+        />
         <p>Откликнулось: {{ offer?.users?.length }}</p>
         <q-btn
+          v-if="role !== EUserRole.Employer"
           v-model="isClicked"
           flat
           color="primary"
@@ -29,13 +42,15 @@
 
           <q-card-actions>
             <q-btn
+              style="pointer-events: none"
               flat
               round
               icon="event"
               class="offer-icon"
             />
-            <q-btn 
-              flat 
+            <q-btn
+              style="pointer-events: none"
+              flat
               class="offer-icon"
             >
               {{ formatDate({ date: new Date(offer?.createdAt)},{}) }}
@@ -60,13 +75,17 @@ import { OfferApiService } from 'src/services/api/offerApi.service';
 import { useUserStore } from 'src/stores/user';
 import { wrapLoader } from 'src/utils/loaderWrapper.util';
 import AppLoader from 'src/components/AppLoader.vue'
+import { EUserRole } from 'src/enums/userTypes.enum';
 
 const offer = ref<IOffer>()
 const route = useRoute();
 const store = useUserStore();
 const isClicked = false;
 const isLoading = ref(false)
-
+const role = ref<string>('')
+if (store.user.roles.length !== 0) {
+  role.value = store.user.roles[0].name
+}
 async function respondOffer() {
   await wrapLoader(isLoading, async () => {
     await OfferApiService.responseOffer(offer.value?.id || 0, store.user?.id)

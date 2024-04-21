@@ -12,7 +12,7 @@
         >
           <img
             :src="avatarUrl"
-            alt="Профиль студента"
+            alt="Профиль"
           >
         </q-avatar>
         <div class="profile-page--title__avatar-star">
@@ -29,7 +29,7 @@
       </div>
       <div class="profile-page--title__text">
         {{ profile?.first_name }} {{ profile?.last_name }} <br>
-        <div>
+        <div v-if="role !== EUserRole.Employer">
           <q-list separator>
             <q-item class="q-pl-none q-pb-none">
               <q-item-section>
@@ -76,18 +76,19 @@
       </div>
       <div class="profile-page--title__right-panel q-ml-auto q-mb-auto">
         <q-btn
-          flat
+          round
+          size="10px"
+          color="primary"
           @click=""
         >
           <q-icon
-            size="30px"
+            size="20px"
             name="edit"
-            color="primary"
           />
         </q-btn>
       </div>
     </div>
-    <div>
+    <div v-if="role !== EUserRole.Employer">
       <GalleryComponent
         :images="gallery"
         class="q-mb-md"
@@ -124,7 +125,10 @@
         </template>
       </GalleryComponent>
     </div>
-    <div class="profile-page--achievements">
+    <div
+      v-if="role !== EUserRole.Employer"
+      class="profile-page--achievements"
+    >
       <p>Достижения</p>
       <q-list
         bordered
@@ -180,7 +184,10 @@
         </q-expansion-item>
       </q-list>
     </div>
-    <div class="profile-page--posts">
+    <div
+      v-if="role !== EUserRole.Employer"
+      class="profile-page--posts"
+    >
       <p>Посты</p>
       <EmptyBanner v-if="!userPosts?.length">
         <template #title>
@@ -205,6 +212,24 @@
         @delete="loadData"
       />
     </div>
+    <OfferCard
+      v-if="role === EUserRole.Employer"
+      :offers="vacancies"
+    >
+      <template #headerIcons>
+        <q-btn
+          round
+          size="10px"
+          color="primary"
+          @click=""
+        >
+          <q-icon
+            name="add"
+            size="20px"
+          />
+        </q-btn>
+      </template>
+    </OfferCard>
   </div>
 </template>
 
@@ -227,6 +252,10 @@ import { wrapLoader } from 'src/utils/loaderWrapper.util'
 import AppLoader from 'components/AppLoader.vue'
 import EmptyBanner from 'components/EmptyBanner.vue'
 import AddPostModal from 'components/modals/AddPostModal.vue'
+import { EUserRole } from 'src/enums/userTypes.enum';
+import { IOffer } from 'src/models/offer.model';
+import { OfferApiService } from 'src/services/api/offerApi.service';
+import OfferCard from 'components/OfferCard.vue';
 const modalManager = inject<ModalManager>(ModalManager.getServiceName());
 function onOpenLoginModal(): void {
   modalManager?.openAsyncModal(GalleryAllModal, {
@@ -239,6 +268,8 @@ function onOpenLoginModal(): void {
 const store = useUserStore();
 const route = useRoute();
 const profile = ref<IUser>();
+const role = ref<string>('');
+const vacancies = ref<Array<IOffer>>([]);
 const avatarUrl = ref('');
 const gallery = ref<IGalleryItem[]>([]);
 const userPosts = ref<Array<IPost>>([]);
@@ -278,7 +309,7 @@ async function attachFile(event: Event): Promise<void> {
 async function loadData(): Promise<void> {
   await wrapLoader(isDataLoading, async () => {
     profile.value = await ProfileApiService.getProfileId(route.params.userId as string);
-    userPosts.value = await PostsApiService.loadUserPosts(+route.params.userId);
+    userPosts.value = await PostsApiService.loadUserPosts(Number(route.params.userId));
     const url = await FilesApiService.getFile(profile.value?.avatar_salt);
     avatarUrl.value = `data:image/png;base64,${url}`
     if (profile.value?.groups.length !== 0) {
@@ -291,11 +322,16 @@ async function loadData(): Promise<void> {
         group: profile.value.groups[0].fullname,
       }
     }
-
+    if (profile.value?.roles.length !== 0) {
+      role.value = profile.value.roles[0].name
+    }
     gallery.value = await ProfileApiService.getGalleryProfileId(route.params.userId as string)
     for (let i = 0; i < gallery.value.length; i++) {
       const url = await FilesApiService.getFile(gallery.value[i].content_salt);
       gallery.value[i].photo = `data:image/png;base64,${url}`;
+    }
+    if (role.value === EUserRole.Employer) {
+      vacancies.value = await OfferApiService.getVacanciesByUserId(Number(route.params.userId));
     }
   })
 }
