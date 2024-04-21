@@ -1,10 +1,12 @@
-import { RedirectService } from './redirect.service';
-import { Router } from 'vue-router';
+import { RedirectService } from './redirect.service'
+import { Router } from 'vue-router'
 import { Cookies, Notify } from 'quasar'
-import api, { setDefaultHeaders } from './api.service';
-import { useUserStore } from 'src/stores/user';
-import { IUser, IUserTokenInfo } from 'src/models/user.model';
+import api, { setDefaultHeaders } from './api.service'
+import { useUserStore } from 'src/stores/user'
+import { IUser, IUserTokenInfo } from 'src/models/user.model'
 import { FilesApiService } from 'src/services/api/filesApi.service'
+import { EUserRole } from 'src/enums/userTypes.enum'
+import { LocalitiesApiService } from 'src/services/api/localitiesApi.service'
 
 export class AuthService {
   private static redirectService: RedirectService;
@@ -27,7 +29,9 @@ export class AuthService {
   }
 
   static async getUserInfoByToken(): Promise<IUser> {
-    return await api.post('/auth/profile');
+    const userInfo = await api.post<IUser>('/auth/profile');
+    userInfo.role = userInfo.roles?.[0]?.name as EUserRole;
+    return userInfo;
   }
 
   static refreshApi() {
@@ -65,6 +69,10 @@ export class AuthService {
 
       if (userInfo.avatar_salt) {
         store.setAvatar(await FilesApiService.getFile(userInfo.avatar_salt));
+      }
+
+      if (userInfo.role === EUserRole.Admin) {
+        store.setAdminUniversity(await LocalitiesApiService.getAdminUniversity(userInfo.id));
       }
     }
 

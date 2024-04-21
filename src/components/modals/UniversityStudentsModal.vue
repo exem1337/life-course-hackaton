@@ -1,0 +1,65 @@
+<script setup lang="ts">
+import BaseModal from 'components/modals/base/BaseModal.vue'
+import { IUniversityStudent } from 'src/models/university.model'
+import EmptyBanner from 'components/EmptyBanner.vue'
+import { formatPersonName } from 'src/utils/nameFormat.util'
+
+defineProps<{
+  universityName: string;
+  students: Array<IUniversityStudent>;
+}>();
+
+defineEmits<{(e: 'confirm'): void }>();
+</script>
+
+<template>
+  <BaseModal
+    class="flex justify-center items-center"
+    overlay-transition="vfm-fade"
+    hide-footer
+    :title="`Студенты ${universityName}`"
+    content-class="flex flex-col max-w-xl mx-4 p-4 bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-lg space-y-2"
+    @cancel="$emit('confirm')"
+  >
+    <div class="students">
+      <EmptyBanner v-if="!students?.length">
+        <template #title>Пока нет студентов</template>
+      </EmptyBanner>
+      <q-item
+        v-else
+        v-for="student in students"
+        :key="student.id"
+        class="students--item"
+      >
+        <q-item-section avatar>
+          <q-avatar>
+            <img
+              :src="student.avatar"
+              alt="avatar"
+            >
+          </q-avatar>
+        </q-item-section>
+
+        <q-item-section>
+          <q-item-label>{{ formatPersonName(student.first_name, student.last_name, student.middle_name) }}</q-item-label>
+          <q-item-label caption> {{ student.fullname }}, Рейтинг: {{ student.rating }} </q-item-label>
+        </q-item-section>
+      </q-item>
+    </div>
+  </BaseModal>
+</template>
+
+<style lang="scss" scoped>
+.students {
+  max-height: 800px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &--item:not(:first-child) {
+    padding-top: 8px;
+    border-top: 1px solid black;
+  }
+}
+</style>

@@ -1,5 +1,6 @@
 import IGroup from 'src/models/groups.model';
 import { IRole } from 'src/models/role.model';
+import { EUserRole } from 'src/enums/userTypes.enum'
 
 export interface IUser {
   id: number;
@@ -16,6 +17,7 @@ export interface IUser {
   updatedAt: string;
   groups: Array<IGroup>;
   roles: Array<IRole>;
+  role: EUserRole;
 }
 
 export interface IUserTokenInfo {
